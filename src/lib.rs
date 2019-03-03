@@ -64,13 +64,21 @@ impl Nonogram {
         self.grid_col_major[index_col_major] = Some(tile);
     }
 
-    pub fn is_filled(&self) -> bool {
-        self.grid_row_major.iter().all(Option::is_some)
-    }
-
     pub fn is_valid_solution(&self) -> bool {
         self.row_clues == self.row_sequence_lengths()
             && self.col_clues == self.col_sequence_lengths()
+    }
+
+    pub fn get_row(&self, row: usize) -> &[MaybeTile] {
+        let start_index = self.index_row_major(row, 0);
+        let end_index = self.index_row_major(row + 1, 0);
+        &self.grid_row_major[start_index..end_index]
+    }
+
+    pub fn get_col(&self, col: usize) -> &[MaybeTile] {
+        let start_index = self.index_col_major(col, 0);
+        let end_index = self.index_col_major(col + 1, 0);
+        &self.grid_col_major[start_index..end_index]
     }
 
     fn index_row_major(&self, row: usize, col: usize) -> usize {
@@ -79,18 +87,6 @@ impl Nonogram {
 
     fn index_col_major(&self, row: usize, col: usize) -> usize {
         col * self.num_rows() + row
-    }
-
-    fn get_row(&self, row: usize) -> &[MaybeTile] {
-        let start_index = self.index_row_major(row, 0);
-        let end_index = self.index_row_major(row + 1, 0);
-        &self.grid_row_major[start_index..end_index]
-    }
-
-    fn get_col(&self, col: usize) -> &[MaybeTile] {
-        let start_index = self.index_col_major(col, 0);
-        let end_index = self.index_col_major(col + 1, 0);
-        &self.grid_col_major[start_index..end_index]
     }
 
     fn row_indices(&self) -> std::ops::Range<usize> {
