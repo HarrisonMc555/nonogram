@@ -60,6 +60,8 @@ impl Nonogram {
     pub fn set_tile(&mut self, row: usize, col: usize, tile: Tile) {
         let index_row_major = self.index_row_major(row, col);
         self.grid_row_major[index_row_major] = Some(tile);
+        let index_col_major = self.index_col_major(col, col);
+        self.grid_col_major[index_col_major] = Some(tile);
     }
 
     pub fn is_filled(&self) -> bool {
