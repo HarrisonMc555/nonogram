@@ -1,17 +1,17 @@
 use nonogram_base as nb;
 
-fn get_small_row_hints() -> Vec<Vec<nb::Length>> {
+fn get_small_row_clues() -> Vec<nb::LineClues> {
     vec![vec![2], vec![1, 1], vec![3]]
 }
 
-fn get_small_col_hints() -> Vec<Vec<nb::Length>> {
+fn get_small_col_clues() -> Vec<nb::LineClues> {
     vec![vec![3], vec![1, 1], vec![1], vec![1]]
 }
 
 fn get_small_nonogram() -> nb::Nonogram {
-    let row_hints = get_small_row_hints();
-    let col_hints = get_small_col_hints();
-    nb::Nonogram::new(row_hints, col_hints)
+    let row_clues = get_small_row_clues();
+    let col_clues = get_small_col_clues();
+    nb::Nonogram::new(row_clues, col_clues)
 }
 
 #[test]
