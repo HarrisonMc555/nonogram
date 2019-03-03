@@ -1,3 +1,29 @@
+//! A struct for representing a Nonogram a (also known as Picross) puzzle
+//!
+//! Quoting from the [Wikipedia page on
+//! Nonograms](https://en.wikipedia.org/wiki/Nonogram):
+//!
+//! > Nonograms, also known as Picross or Griddlers, are picture logic
+//! > puzzles in which cells in a grid must be colored or left blank according
+//! > to numbers at the side of the grid to reveal a hidden picture. In this
+//! > puzzle type, the numbers are a form of discrete tomography that measures
+//! > how many unbroken lines of filled-in squares there are in any given row
+//! > or column. For example, a clue of "4 8 3" would mean there are sets of
+//! > four, eight, and three filled squares, in that order, with at least one
+//! > blank square between successive groups.
+//!
+//! The [Nonogram] struct is created with two `Vec<LineClues>` (or
+//! `Vec<Vec<usize>>` without type aliases). These represent the "clues" for
+//! the rows and columns, respectively.
+//!
+//! Each "tile" in the [Nonogram] struct is either unknown ([None]) or known
+//! ([Some]). If it is known, it is either [Filled] or [NotFilled] (i.e. black
+//! or white, respectively).
+//!
+//! A [Nonogram] is considered a valid solution if all of the [Filled] tiles
+//! form lengths that match both the row and column "clues". Any unknown
+//! ([None]) tiles are treated as [NotFilled].
+
 use itertools::Itertools;
 
 pub type MaybeTile = Option<Tile>;
