@@ -1,7 +1,7 @@
 use itertools::Itertools;
 
 pub type MaybeTile = Option<Tile>;
-pub type Clue = u32;
+pub type Clue = usize;
 pub type LineClues = Vec<Clue>;
 
 #[derive(Debug, Copy, Clone, Eq, PartialEq, Ord, PartialOrd)]
@@ -12,17 +12,13 @@ pub enum Tile {
 
 macro_rules! rows {
     ( $nonogram:expr ) => {
-        $nonogram
-            .row_indices()
-            .map(|index| $nonogram.get_row(index))
+        Nonogram::row_indices($nonogram).map(|index| $nonogram.get_row(index))
     };
 }
 
 macro_rules! cols {
     ( $nonogram:expr ) => {
-        $nonogram
-            .col_indices()
-            .map(|index| $nonogram.get_col(index))
+        Nonogram::col_indices($nonogram).map(|index| $nonogram.get_col(index))
     };
 }
 
@@ -34,10 +30,7 @@ pub struct Nonogram {
 }
 
 impl Nonogram {
-    pub fn new(
-        row_clues: Vec<LineClues>,
-        col_clues: Vec<LineClues>,
-    ) -> Self {
+    pub fn new(row_clues: Vec<LineClues>, col_clues: Vec<LineClues>) -> Self {
         let num_rows = row_clues.len();
         let num_cols = col_clues.len();
         let num_tiles = num_rows * num_cols;
@@ -124,6 +117,6 @@ impl Nonogram {
             .map(|maybe_tile| maybe_tile.unwrap_or(Tile::NotFilled));
         let groups = sequence.group_by(|&t| t);
         let filled = groups.into_iter().filter(|(key, _)| *key == Tile::Filled);
-        filled.map(|(_, group)| group.count() as Clue).collect()
+        filled.map(|(_, group)| group.count()).collect()
     }
 }
