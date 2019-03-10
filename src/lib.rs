@@ -90,6 +90,13 @@ impl Nonogram {
         self.grid_col_major[index_col_major] = Some(tile);
     }
 
+    pub fn unset_tile(&mut self, row: usize, col: usize) {
+        let index_row_major = self.index_row_major(row, col);
+        self.grid_row_major[index_row_major] = None;
+        let index_col_major = self.index_col_major(row, col);
+        self.grid_col_major[index_col_major] = None;
+    }
+
     pub fn is_correct_solution(&self) -> bool {
         self.row_clues == self.row_sequence_lengths()
             && self.col_clues == self.col_sequence_lengths()

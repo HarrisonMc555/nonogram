@@ -97,6 +97,32 @@ fn can_set_tile_not_filled() {
 }
 
 #[test]
+fn can_unset_tile() {
+    let mut non = get_small_nonogram();
+    let my_row_index = 2;
+    let my_col_index = 1;
+    let my_tile = nb::Tile::Filled;
+    non.set_tile(my_row_index, my_col_index, my_tile);
+    for row in 0..non.num_rows() {
+        for col in 0..non.num_cols() {
+            let act_tile = non.get_tile(row, col);
+            let exp_tile = if row == my_row_index && col == my_col_index {
+                Some(my_tile)
+            } else {
+                None
+            };
+            assert_eq!(act_tile, exp_tile);
+        }
+    }
+    non.unset_tile(my_row_index, my_col_index);
+    for row in 0..non.num_rows() {
+        for col in 0..non.num_cols() {
+            assert_eq!(non.get_tile(row, col), None);
+        }
+    }
+}
+
+#[test]
 fn can_get_rows() {
     let mut non = get_small_nonogram();
     let empty_row = [None; 4];
