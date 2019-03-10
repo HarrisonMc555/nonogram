@@ -1,0 +1,6 @@
+[workspace]
+
+members = [
+    "nonogram-base",
+    "nonogram-format",
+]
