@@ -86,7 +86,7 @@ impl Nonogram {
     pub fn set_tile(&mut self, row: usize, col: usize, tile: Tile) {
         let index_row_major = self.index_row_major(row, col);
         self.grid_row_major[index_row_major] = Some(tile);
-        let index_col_major = self.index_col_major(col, col);
+        let index_col_major = self.index_col_major(row, col);
         self.grid_col_major[index_col_major] = Some(tile);
     }
 
@@ -102,8 +102,9 @@ impl Nonogram {
     }
 
     pub fn get_col(&self, col: usize) -> &[MaybeTile] {
-        let start_index = self.index_col_major(col, 0);
-        let end_index = self.index_col_major(col + 1, 0);
+        let start_index = self.index_col_major(0, col);
+        let end_index = self.index_col_major(0, col + 1);
+        println!("start: {}, end: {}", start_index, end_index);
         &self.grid_col_major[start_index..end_index]
     }
 
