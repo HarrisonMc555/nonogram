@@ -29,6 +29,16 @@ fn get_small_nonogram() -> nb::Nonogram {
     nb::Nonogram::new(row_clues, col_clues)
 }
 
+fn get_correct_solution_grid() -> Vec<Vec<nb::Tile>> {
+    let mut grid = Vec::with_capacity(3);
+    const F: nb::Tile = nb::Tile::Filled;
+    const N: nb::Tile = nb::Tile::NotFilled;
+    grid.push(vec![F, F, N, N]);
+    grid.push(vec![F, N, N, F]);
+    grid.push(vec![F, F, F, N]);
+    grid
+}
+
 #[test]
 fn can_get_dimensions() {
     let non = get_small_nonogram();
@@ -130,4 +140,50 @@ fn can_get_cols() {
 fn empty_is_not_correct_solution() {
     let non = get_small_nonogram();
     assert!(!non.is_correct_solution());
+}
+
+#[test]
+fn correct_solution_is_correct_solution() {
+    let mut non = get_small_nonogram();
+    let solution = get_correct_solution_grid();
+    let last_filled_cell_indices = (2, 2);
+    for (row_i, row) in solution.iter().enumerate() {
+        for (col_i, tile) in row.iter().enumerate() {
+            if *tile == nb::Tile::Filled {
+                non.set_tile(row_i, col_i, nb::Tile::Filled);
+            }
+
+            // If we have not yet set all of the filled tiles, then it should
+            // not be considered correct. Once we have set all of the filled
+            // tiles, it *should* be considered correct (regardless of whether
+            // or not the last tiles are unfilled or blank (None)).
+            let should_be_correct_solution = (row_i, col_i) >=
+                last_filled_cell_indices;
+            assert_eq!(non.is_correct_solution(), should_be_correct_solution);
+        }
+    }
+}
+
+#[test]
+fn blank_tiles_do_not_affect_correct_solution() {
+    let mut non = get_small_nonogram();
+    let solution = get_correct_solution_grid();
+    let last_filled_cell_indices = (2, 2);
+    for (row_i, row) in solution.iter().enumerate() {
+        for (col_i, tile) in row.iter().enumerate() {
+            if *tile == nb::Tile::Filled {
+                non.set_tile(row_i, col_i, nb::Tile::Filled);
+            } else {
+                non.set_tile(row_i, col_i, nb::Tile::NotFilled);
+            }
+
+            // If we have not yet set all of the filled tiles, then it should
+            // not be considered correct. Once we have set all of the filled
+            // tiles, it *should* be considered correct (regardless of whether
+            // or not the last tiles are unfilled or blank (None)).
+            let should_be_correct_solution = (row_i, col_i) >=
+                last_filled_cell_indices;
+            assert_eq!(non.is_correct_solution(), should_be_correct_solution);
+        }
+    }
 }
