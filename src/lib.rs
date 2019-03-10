@@ -17,10 +17,10 @@
 //! the rows and columns, respectively.
 //!
 //! Each "tile" in the [Nonogram] struct is either unknown ([None]) or known
-//! ([Some]). If it is known, it is either [Filled] or [NotFilled] (i.e. black
-//! or white, respectively).
+//! ([Some]). If it is known, it is either [Filled](Tile::Filled) or
+//! [NotFilled](Tile::NotFilled) (i.e. black or white, respectively).
 //!
-//! A [Nonogram] is considered a valid solution if all of the [Filled] tiles
+//! A [Nonogram] is considered a correct solution if all of the [Filled] tiles
 //! form lengths that match both the row and column "clues". Any unknown
 //! ([None]) tiles are treated as [NotFilled].
 
@@ -90,7 +90,7 @@ impl Nonogram {
         self.grid_col_major[index_col_major] = Some(tile);
     }
 
-    pub fn is_valid_solution(&self) -> bool {
+    pub fn is_correct_solution(&self) -> bool {
         self.row_clues == self.row_sequence_lengths()
             && self.col_clues == self.col_sequence_lengths()
     }
