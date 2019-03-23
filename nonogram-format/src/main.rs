@@ -9,8 +9,10 @@ fn main() {
     let formatter = NonogramFormatter::default();
     let lines = formatter.get_lines(&non);
     println!("{}\n", lines.join("\n"));
+
     non.set_tile(1, 2, nb::Tile::Filled);
     non.set_tile(2, 2, nb::Tile::NotFilled);
+    let formatter = NonogramFormatter::new("#", "X", "_", true);
     let lines = formatter.get_lines(&non);
     println!("{}", lines.join("\n"));
 }

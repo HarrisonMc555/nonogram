@@ -34,13 +34,13 @@ impl NonogramFormatter {
         let leading_spaces = " ".repeat(max_row_width);
         let col_lines_with_leading_spaces = col_lines
             .iter()
-            .map(|line| format!("{} {}", leading_spaces, line));
+            .map(|line| format!("{}  {}", leading_spaces, line));
         let horizontal_line =
-            format!("{}+{}", leading_spaces, "-".repeat(max_col_width));
+            format!("{}  {}", leading_spaces, "_".repeat(max_col_width));
         let row_and_grid_lines = row_lines
             .iter()
             .zip(grid_lines.iter())
-            .map(|(row_line, grid_line)| format!("{}|{}", row_line, grid_line));
+            .map(|(row_line, grid_line)| format!("{} |{}", row_line, grid_line));
         col_lines_with_leading_spaces
             .chain(Some(horizontal_line))
             .chain(row_and_grid_lines)
@@ -141,6 +141,7 @@ impl NonogramFormatter {
                 NonogramFormatter::format_col_clues_at(
                     &clue_strings,
                     i,
+                    max_num_clues,
                     &filler_spaces,
                 )
             })
@@ -150,12 +151,17 @@ impl NonogramFormatter {
     fn format_col_clues_at(
         col_clue_strings: &[Vec<String>],
         index: usize,
+        max_num_clues: usize,
         filler_spaces: &str,
     ) -> String {
         let strings: Vec<_> = col_clue_strings
             .iter()
             .map(|col| {
-                col.get(index)
+                if index + col.len() < max_num_clues {
+                    return filler_spaces.to_string();
+                }
+                let i = index + col.len() - max_num_clues;
+                col.get(i)
                     .cloned()
                     .unwrap_or_else(|| filler_spaces.to_string())
             })
@@ -169,7 +175,7 @@ impl Default for NonogramFormatter {
         NonogramFormatter {
             filled_string: "#".to_string(),
             not_filled_string: "x".to_string(),
-            none_string: "?".to_string(),
+            none_string: "_".to_string(),
             do_display_numbers: true,
         }
     }
