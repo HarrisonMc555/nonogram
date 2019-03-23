@@ -1,6 +1,8 @@
-[workspace]
+[package]
+name = "nonogram"
+version = "0.1.0"
+authors = ["Harrison McCullough <mccullough.harrison@gmail.com>"]
+edition = "2018"
 
-members = [
-    "nonogram-base",
-    "nonogram-format",
-]
+[dependencies]
+itertools = "0.8"

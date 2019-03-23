@@ -1,20 +1,20 @@
-use nonogram_base as nb;
+use crate::nonogram as nb;
 
-pub struct NonogramFormatter {
+pub struct Formatter {
     filled_string: String,
     not_filled_string: String,
     none_string: String,
     do_display_numbers: bool,
 }
 
-impl NonogramFormatter {
+impl Formatter {
     pub fn new(
         filled_string: &str,
         not_filled_string: &str,
         none_string: &str,
         do_display_numbers: bool,
     ) -> Self {
-        NonogramFormatter {
+        Formatter {
             filled_string: filled_string.to_string(),
             not_filled_string: not_filled_string.to_string(),
             none_string: none_string.to_string(),
@@ -91,7 +91,7 @@ impl NonogramFormatter {
         clue_strings
             .iter()
             .map(|clues| {
-                NonogramFormatter::format_one_row_clues(
+                Formatter::format_one_row_clues(
                     clues,
                     max_num_clues,
                     &filler_spaces,
@@ -138,7 +138,7 @@ impl NonogramFormatter {
         let filler_spaces = " ".repeat(clue_width);
         (0..max_num_clues)
             .map(|i| {
-                NonogramFormatter::format_col_clues_at(
+                Formatter::format_col_clues_at(
                     &clue_strings,
                     i,
                     max_num_clues,
@@ -170,9 +170,9 @@ impl NonogramFormatter {
     }
 }
 
-impl Default for NonogramFormatter {
+impl Default for Formatter {
     fn default() -> Self {
-        NonogramFormatter {
+        Formatter {
             filled_string: "#".to_string(),
             not_filled_string: "x".to_string(),
             none_string: "_".to_string(),

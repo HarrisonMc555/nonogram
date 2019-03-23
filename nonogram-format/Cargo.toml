@@ -1,8 +1,0 @@
-[package]
-name = "nonogram-format"
-version = "0.1.0"
-authors = ["Harrison McCullough <mccullough.harrison@gmail.com>"]
-edition = "2018"
-
-[dependencies]
-nonogram-base = { version = "0.1", path = "../nonogram-base" }
