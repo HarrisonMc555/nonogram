@@ -1,7 +1,7 @@
 pub mod nonogram;
-pub mod format;
+pub mod formatter;
 pub use crate::nonogram::{Nonogram, Tile};
-pub use crate::format::Formatter;
+pub use crate::formatter::Formatter;
 
 fn main() {
     let row_clues = vec![vec![2], vec![1, 1], vec![3]];
