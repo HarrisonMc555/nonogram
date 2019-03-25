@@ -22,6 +22,10 @@ impl Formatter {
         }
     }
 
+    // pub fn get_vec_of_vecs(&self, non: &nb::Nonogram) -> Vec<Vec<String>> {
+    //     vec![]
+    // }
+
     pub fn get_lines(&self, non: &nb::Nonogram) -> Vec<String> {
         let grid_lines = self.get_only_grid_lines(non);
         if !self.do_display_numbers {
@@ -37,15 +41,21 @@ impl Formatter {
             .map(|line| format!("{}  {}", leading_spaces, line));
         let horizontal_line =
             format!("{}  {}", leading_spaces, "_".repeat(max_col_width));
-        let row_and_grid_lines = row_lines
-            .iter()
-            .zip(grid_lines.iter())
-            .map(|(row_line, grid_line)| format!("{} |{}", row_line, grid_line));
+        let row_and_grid_lines = row_lines.iter().zip(grid_lines.iter()).map(
+            |(row_line, grid_line)| format!("{} |{}", row_line, grid_line),
+        );
         col_lines_with_leading_spaces
             .chain(Some(horizontal_line))
             .chain(row_and_grid_lines)
             .collect()
     }
+
+    // pub fn get_only_grid_vec_of_vecs(
+    //     &self,
+    //     non: &nb::Nonogram,
+    // ) -> Vec<Vec<String>> {
+    //     vec![]
+    // }
 
     pub fn get_only_grid_lines(&self, non: &nb::Nonogram) -> Vec<String> {
         (0..non.num_rows())
