@@ -22,6 +22,7 @@ impl Formatter {
         }
     }
 
+    // pub fn get_string_grid(&self, non: &nb::Nonogram) -> 
     // pub fn get_vec_of_vecs(&self, non: &nb::Nonogram) -> Vec<Vec<String>> {
     //     vec![]
     // }
