@@ -70,12 +70,38 @@ impl Nonogram {
         }
     }
 
+    pub fn rows(&self) -> impl Iterator<Item = &[MaybeTile]> {
+        (0..self.num_rows())
+            .map(|i| self.get_row(i))
+            .collect::<Vec<_>>()
+            .into_iter()
+    }
+
+    pub fn cols(&self) -> impl Iterator<Item = &[MaybeTile]> {
+        (0..self.num_cols())
+            .map(|i| self.get_col(i))
+            .collect::<Vec<_>>()
+            .into_iter()
+    }
     pub fn num_rows(&self) -> usize {
         self.row_clues.len()
     }
 
     pub fn num_cols(&self) -> usize {
         self.col_clues.len()
+    }
+
+    pub fn get_row(&self, row: usize) -> &[MaybeTile] {
+        let start_index = self.index_row_major(row, 0);
+        let end_index = self.index_row_major(row + 1, 0);
+        &self.grid_row_major[start_index..end_index]
+    }
+
+    pub fn get_col(&self, col: usize) -> &[MaybeTile] {
+        let start_index = self.index_col_major(0, col);
+        let end_index = self.index_col_major(0, col + 1);
+        println!("start: {}, end: {}", start_index, end_index);
+        &self.grid_col_major[start_index..end_index]
     }
 
     pub fn row_clues(&self) -> &[LineClues] {
@@ -108,19 +134,6 @@ impl Nonogram {
     pub fn is_correct_solution(&self) -> bool {
         self.row_clues == self.row_sequence_lengths()
             && self.col_clues == self.col_sequence_lengths()
-    }
-
-    pub fn get_row(&self, row: usize) -> &[MaybeTile] {
-        let start_index = self.index_row_major(row, 0);
-        let end_index = self.index_row_major(row + 1, 0);
-        &self.grid_row_major[start_index..end_index]
-    }
-
-    pub fn get_col(&self, col: usize) -> &[MaybeTile] {
-        let start_index = self.index_col_major(0, col);
-        let end_index = self.index_col_major(0, col + 1);
-        println!("start: {}, end: {}", start_index, end_index);
-        &self.grid_col_major[start_index..end_index]
     }
 
     fn index_row_major(&self, row: usize, col: usize) -> usize {
