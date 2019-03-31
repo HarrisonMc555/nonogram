@@ -112,6 +112,14 @@ impl Nonogram {
         &self.col_clues
     }
 
+    pub fn row_clues_at(&self, index: usize) -> &LineClues {
+        &self.row_clues[index]
+    }
+
+    pub fn col_clues_at(&self, index: usize) -> &LineClues {
+        &self.col_clues[index]
+    }
+
     pub fn get_tile(&self, row: usize, col: usize) -> MaybeTile {
         let index_row_major = self.index_row_major(row, col);
         self.grid_row_major[index_row_major]

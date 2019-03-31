@@ -47,6 +47,8 @@ fn main() {
 
     let mut siv = Cursive::default();
 
+    cursive::logger::init();
+
     siv.add_layer(
         Dialog::new()
             .title("Nonogram")
@@ -58,5 +60,6 @@ fn main() {
             })
     );
 
+    // siv.show_debug_console();
     siv.run();
 }
