@@ -1,7 +1,7 @@
 use crate::nonogram::{LineClues, MaybeTile, Nonogram, Tile};
 use std::fmt::Display;
 
-type StringGrid = Vec<Vec<String>>;
+type Grid<T> = Vec<Vec<T>>;
 
 pub struct Formatter {
     filled_string: String,
@@ -25,7 +25,7 @@ impl Formatter {
         }
     }
 
-    pub fn get_string_grid(&self, non: &Nonogram) -> StringGrid {
+    pub fn get_string_grid(&self, non: &Nonogram) -> Grid<String> {
         let rows_string_grid = Formatter::get_rows_clue_string_grid(non);
         let cols_string_grid = Formatter::get_cols_clue_string_grid(non);
         let cells_string_grid = self.get_cells_string_grid(non);
@@ -36,7 +36,7 @@ impl Formatter {
             .map(|_| " ".repeat(max_row_clue_width))
             .collect();
 
-        let top_section: StringGrid = cols_string_grid
+        let top_section: Grid<String> = cols_string_grid
             .into_iter()
             .map(|row: Vec<_>| joined(empty_line.clone(), row))
             .collect();
@@ -62,7 +62,7 @@ impl Formatter {
         vec![]
     }
 
-    fn get_rows_clue_string_grid(non: &Nonogram) -> StringGrid {
+    fn get_rows_clue_string_grid(non: &Nonogram) -> Grid<String> {
         let max_num_clues = get_max_num_row_clues(non);
         let max_row_clue_width = get_max_row_clue_width(non);
         let clue_string_grid = get_string_grid(non.row_clues());
@@ -73,7 +73,7 @@ impl Formatter {
         )
     }
 
-    fn get_cols_clue_string_grid(non: &Nonogram) -> StringGrid {
+    fn get_cols_clue_string_grid(non: &Nonogram) -> Grid<String> {
         let max_num_clues = get_max_num_col_clues(non);
         let max_col_clue_width = get_max_col_clue_width(non);
         let clue_string_grid = get_string_grid(non.col_clues());
@@ -85,7 +85,7 @@ impl Formatter {
         transpose(transposed)
     }
 
-    fn get_cells_string_grid(&self, non: &Nonogram) -> StringGrid {
+    fn get_cells_string_grid(&self, non: &Nonogram) -> Grid<String> {
         non.rows()
             .map(|row| {
                 row.iter()
@@ -98,10 +98,10 @@ impl Formatter {
     }
 
     fn waterfill_clue_string_grid(
-        clue_string_grid: &StringGrid,
+        clue_string_grid: &Grid<String>,
         max_num_clues: usize,
         max_clue_width: usize,
-    ) -> StringGrid {
+    ) -> Grid<String> {
         let filler_spaces = " ".repeat(max_clue_width);
         clue_string_grid
             .iter()
@@ -178,7 +178,7 @@ impl Formatter {
 
     fn get_row_clue_lines(&self, non: &Nonogram) -> Vec<String> {
         let max_num_clues = non.row_clues().iter().map(Vec::len).max().unwrap();
-        let clue_strings: Vec<Vec<_>> = non
+        let clue_strings: Grid<_> = non
             .row_clues()
             .iter()
             .map(|row| row.iter().map(|clue| clue.to_string()).collect())
@@ -226,7 +226,7 @@ impl Formatter {
 
     fn get_col_clue_lines(&self, non: &Nonogram) -> Vec<String> {
         let max_num_clues = non.col_clues().iter().map(Vec::len).max().unwrap();
-        let clue_strings: Vec<Vec<_>> = non
+        let clue_strings: Grid<_> = non
             .col_clues()
             .iter()
             .map(|col| col.iter().map(|clue| clue.to_string()).collect())
@@ -315,7 +315,7 @@ fn get_max_num_clues(clues: &[LineClues]) -> usize {
     clues.iter().map(Vec::len).max().unwrap()
 }
 
-fn get_string_grid<T>(grid: &[Vec<T>]) -> StringGrid
+fn get_string_grid<T>(grid: &[Vec<T>]) -> Grid<String>
 where
     T: Display,
 {
@@ -333,7 +333,7 @@ where
     tmp
 }
 
-fn transpose<T>(grid: Vec<Vec<T>>) -> Vec<Vec<T>> {
+fn transpose<T>(grid: Grid<T>) -> Grid<T> {
     if grid.is_empty() {
         return grid;
     }
