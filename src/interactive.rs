@@ -34,6 +34,69 @@ impl NonogramView {
         }
     }
 
+    pub fn toggle_filled_focused(&mut self) {
+        if let Some(Tile::Filled) = self.get_focused() {
+            self.clear_focused();
+        } else {
+            self.set_focused(Tile::Filled);
+        }
+    }
+
+    pub fn toggle_not_filled_focused(&mut self) {
+        if let Some(Tile::NotFilled) = self.get_focused() {
+            self.clear_focused();
+        } else {
+            self.set_focused(Tile::NotFilled);
+        }
+    }
+
+    pub fn clear_focused(&mut self) {
+        let (row, col) = self.focus;
+        self.nonogram.unset_tile(row, col);
+    }
+
+    pub fn move_focus_up(&mut self) {
+        let (mut row, col) = self.focus;
+        if row > 0 {
+            row -= 1;
+        }
+        self.focus = (row, col);
+    }
+
+    pub fn move_focus_down(&mut self) {
+        let (mut row, col) = self.focus;
+        if row < self.nonogram.num_rows() - 1 {
+            row += 1;
+        }
+        self.focus = (row, col);
+    }
+
+    pub fn move_focus_left(&mut self) {
+        let (row, mut col) = self.focus;
+        if col > 0 {
+            col -= 1;
+        }
+        self.focus = (row, col);
+    }
+
+    pub fn move_focus_right(&mut self) {
+        let (row, mut col) = self.focus;
+        if col < self.nonogram.num_cols() - 1 {
+            col += 1;
+        }
+        self.focus = (row, col);
+    }
+
+    fn get_focused(&self) -> MaybeTile {
+        let (row, col) = self.focus;
+        self.nonogram.get_tile(row, col)
+    }
+
+    fn set_focused(&mut self, tile: Tile) {
+        let (row, col) = self.focus;
+        self.nonogram.set_tile(row, col, tile);
+    }
+
     fn draw_all_row_clues(&self, printer: &Printer) {
         for i in 0..self.nonogram.num_rows() {
             self.draw_row_clues(i, printer);
@@ -124,7 +187,13 @@ impl NonogramView {
             NonogramView::maybe_tile_to_string(tile),
             width = NonogramView::get_max_cell_width()
         );
-        printer.print(position, &s);
+        if location == self.focus {
+            printer.with_color(cursive::theme::ColorStyle::highlight(), |p| {
+                p.print(position, &s)
+            });
+        } else {
+            printer.print(position, &s);
+        }
     }
 
     fn draw_borders(&self, printer: &Printer) {
@@ -230,8 +299,7 @@ impl View for NonogramView {
         let row_clues_width =
             self.max_num_row_clues * self.row_clue_space_width();
         let col_clues_height = self.max_num_col_clues;
-        let grid_width =
-            self.nonogram.num_cols() * NonogramView::cell_width();
+        let grid_width = self.nonogram.num_cols() * NonogramView::cell_width();
         let grid_height = self.nonogram.num_rows();
         // Clues + divider + grid
         let width = row_clues_width + 1 + grid_width;

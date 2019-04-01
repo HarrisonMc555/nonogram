@@ -1,17 +1,23 @@
 pub mod nonogram;
 pub use crate::nonogram::{Nonogram, Tile};
 
+#[cfg(not(feature = "interactive"))]
 pub mod formatter;
+#[cfg(not(feature = "interactive"))]
 pub use crate::formatter::Formatter;
 
 #[cfg(feature = "interactive")]
 mod interactive;
 #[cfg(feature = "interactive")]
-use interactive::NonogramView;
+use cursive::event::{Event, Key};
+#[cfg(feature = "interactive")]
+use cursive::traits::*;
+#[cfg(feature = "interactive")]
+use cursive::views::{Dialog, LinearLayout, OnEventView, Panel};
 #[cfg(feature = "interactive")]
 use cursive::Cursive;
 #[cfg(feature = "interactive")]
-use cursive::views::{Dialog, LinearLayout, Panel};
+use interactive::NonogramView;
 
 #[cfg(not(feature = "interactive"))]
 fn main() {
@@ -50,16 +56,46 @@ fn main() {
     cursive::logger::init();
 
     siv.add_layer(
-        Dialog::new()
-            .title("Nonogram")
-            .content(LinearLayout::horizontal()
-                     .child(Panel::new(NonogramView::new(non)))
-            )
-            .button("Quit game", |s| {
-                s.quit();
-            })
+        OnEventView::new(
+            Dialog::new()
+                .title("Nonogram")
+                .content(
+                    LinearLayout::horizontal().child(Panel::new(
+                        NonogramView::new(non).with_id("game"),
+                    )),
+                )
+                .button("Quit game", |s| {
+                    s.quit();
+                }),
+        )
+        .on_event(Event::Key(Key::Up), |s| {
+            s.find_id::<NonogramView>("game").unwrap().move_focus_up();
+        })
+        .on_event(Event::Key(Key::Down), |s| {
+            s.find_id::<NonogramView>("game").unwrap().move_focus_down();
+        })
+        .on_event(Event::Key(Key::Left), |s| {
+            s.find_id::<NonogramView>("game").unwrap().move_focus_left();
+        })
+        .on_event(Event::Key(Key::Right), |s| {
+            s.find_id::<NonogramView>("game")
+                .unwrap()
+                .move_focus_right();
+        })
+        .on_event(Event::Char('z'), |s| {
+            s.find_id::<NonogramView>("game")
+                .unwrap()
+                .toggle_filled_focused();
+        })
+        .on_event(Event::Char('x'), |s| {
+            s.find_id::<NonogramView>("game")
+                .unwrap()
+                .toggle_not_filled_focused();
+        })
+        .on_event(Event::Char('c'), |s| {
+            s.find_id::<NonogramView>("game").unwrap().clear_focused();
+        }),
     );
 
-    // siv.show_debug_console();
     siv.run();
 }
