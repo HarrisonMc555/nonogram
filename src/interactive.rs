@@ -13,9 +13,15 @@ pub struct NonogramView {
 }
 
 impl NonogramView {
+    // const FILLED_STRING: &'static str = "▣";
+    // const NOT_FILLED_STRING: &'static str = "☒";
+    // const UNKNOWN_STRING: &'static str = "☐";
     const FILLED_STRING: &'static str = "#";
     const NOT_FILLED_STRING: &'static str = "X";
     const UNKNOWN_STRING: &'static str = "_";
+    const TOP_DIVIDER: char = '─';
+    const SIDE_DIVIDER: char = '│';
+    const CORNER_DIVIDER: char = '┌';
 
     pub fn new(nonogram: Nonogram) -> Self {
         NonogramView {
@@ -108,15 +114,52 @@ impl NonogramView {
         let (row, col) = location;
         // all row/col clues + 1 for divider
         let x_offset = self.max_num_row_clues * self.row_clue_space_width() + 1;
-        let y_offset = self.max_num_col_clues * self.col_clue_space_width() + 1;
-        let x = x_offset + NonogramView::get_cell_width() * col;
+        let y_offset = self.max_num_col_clues + 1;
+        let x = x_offset + NonogramView::cell_width() * col;
         let y = y_offset + row;
         let position = (x, y);
+        eprintln!("position: {:?}", position);
         let s = format!(
             "{:<width$}",
             NonogramView::maybe_tile_to_string(tile),
             width = NonogramView::get_max_cell_width()
         );
+        printer.print(position, &s);
+    }
+
+    fn draw_borders(&self, printer: &Printer) {
+        self.draw_top_border(printer);
+        self.draw_side_border(printer);
+        self.draw_corner_border(printer);
+    }
+
+    fn draw_top_border(&self, printer: &Printer) {
+        let x = self.max_num_row_clues * self.row_clue_space_width() + 1;
+        let y = self.max_num_col_clues;
+        let position = (x, y);
+        let width = self.nonogram.num_cols() * NonogramView::cell_width();
+        let s = NonogramView::TOP_DIVIDER.to_string().repeat(width);
+        printer.print(position, &s);
+    }
+
+    fn draw_side_border(&self, printer: &Printer) {
+        let x = self.max_num_row_clues * self.row_clue_space_width();
+        let y_offset = self.max_num_col_clues + 1;
+        let s = NonogramView::SIDE_DIVIDER.to_string();
+        eprintln!("s: {}", s);
+        for j in 0..self.nonogram.num_rows() {
+            let y = y_offset + j;
+            let position = (x, y);
+            eprintln!("position: {:?}", position);
+            printer.print(position, &s);
+        }
+    }
+
+    fn draw_corner_border(&self, printer: &Printer) {
+        let x = self.max_num_row_clues * self.row_clue_space_width();
+        let y = self.max_num_col_clues;
+        let position = (x, y);
+        let s = NonogramView::CORNER_DIVIDER.to_string();
         printer.print(position, &s);
     }
 
@@ -147,20 +190,22 @@ impl NonogramView {
         .unwrap()
     }
 
-    fn get_cell_width() -> usize {
+    fn cell_width() -> usize {
         NonogramView::get_max_cell_width() + 1
     }
 
     fn get_max_cell_width() -> usize {
-        [
-            NonogramView::FILLED_STRING,
-            NonogramView::NOT_FILLED_STRING,
-            NonogramView::UNKNOWN_STRING,
-        ]
-        .into_iter()
-        .map(|s| s.len())
-        .max()
-        .unwrap()
+        1
+        // 2
+        // [
+        //     NonogramView::FILLED_STRING,
+        //     NonogramView::NOT_FILLED_STRING,
+        //     NonogramView::UNKNOWN_STRING,
+        // ]
+        // .into_iter()
+        // .map(|s| s.len())
+        // .max()
+        // .unwrap()
     }
 }
 
@@ -177,6 +222,7 @@ impl View for NonogramView {
         // }
         self.draw_all_row_clues(printer);
         self.draw_all_col_clues(printer);
+        self.draw_borders(printer);
         self.draw_grid(printer);
     }
 
@@ -185,7 +231,7 @@ impl View for NonogramView {
             self.max_num_row_clues * self.row_clue_space_width();
         let col_clues_height = self.max_num_col_clues;
         let grid_width =
-            self.nonogram.num_cols() * NonogramView::get_cell_width();
+            self.nonogram.num_cols() * NonogramView::cell_width();
         let grid_height = self.nonogram.num_rows();
         // Clues + divider + grid
         let width = row_clues_width + 1 + grid_width;
@@ -194,7 +240,7 @@ impl View for NonogramView {
         eprintln!("max_num_col_clues: {}", self.max_num_col_clues);
         eprintln!("max_row_clue_width: {}", self.max_row_clue_width);
         eprintln!("max_col_clue_width: {}", self.max_col_clue_width);
-        eprintln!("cell_width: {}", NonogramView::get_cell_width());
+        eprintln!("cell_width: {}", NonogramView::cell_width());
         eprintln!("width: {}", width);
         eprintln!("height: {}", height);
         (width, height).into()
