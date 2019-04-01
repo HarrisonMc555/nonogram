@@ -53,7 +53,7 @@ fn main() {
 
     let mut siv = Cursive::default();
 
-    cursive::logger::init();
+    // cursive::logger::init();
 
     siv.add_layer(
         OnEventView::new(
@@ -83,9 +83,19 @@ fn main() {
                 .move_focus_right();
         })
         .on_event(Event::Char('z'), |s| {
-            s.find_id::<NonogramView>("game")
-                .unwrap()
-                .toggle_filled_focused();
+            let mut non_view = s.find_id::<NonogramView>("game").unwrap();
+            non_view.toggle_filled_focused();
+            if non_view.is_correct_solution() {
+                eprintln!("Is correct solution!");
+                s.add_layer(
+                    Dialog::new().title("You won!").button("Ok", |s| s.quit()),
+                );
+            } else {
+                eprintln!("Not correct solution");
+            }
+            // s.find_id::<NonogramView>("game")
+            //     .unwrap()
+            //     .toggle_filled_focused();
         })
         .on_event(Event::Char('x'), |s| {
             s.find_id::<NonogramView>("game")

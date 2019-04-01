@@ -87,6 +87,10 @@ impl NonogramView {
         self.focus = (row, col);
     }
 
+    pub fn is_correct_solution(&self) -> bool {
+        self.nonogram.is_correct_solution()
+    }
+
     fn get_focused(&self) -> MaybeTile {
         let (row, col) = self.focus;
         self.nonogram.get_tile(row, col)
@@ -181,7 +185,7 @@ impl NonogramView {
         let x = x_offset + NonogramView::cell_width() * col;
         let y = y_offset + row;
         let position = (x, y);
-        eprintln!("position: {:?}", position);
+        // eprintln!("position: {:?}", position);
         let s = format!(
             "{:<width$}",
             NonogramView::maybe_tile_to_string(tile),
@@ -215,11 +219,11 @@ impl NonogramView {
         let x = self.max_num_row_clues * self.row_clue_space_width();
         let y_offset = self.max_num_col_clues + 1;
         let s = NonogramView::SIDE_DIVIDER.to_string();
-        eprintln!("s: {}", s);
+        // eprintln!("s: {}", s);
         for j in 0..self.nonogram.num_rows() {
             let y = y_offset + j;
             let position = (x, y);
-            eprintln!("position: {:?}", position);
+            // eprintln!("position: {:?}", position);
             printer.print(position, &s);
         }
     }
@@ -304,13 +308,13 @@ impl View for NonogramView {
         // Clues + divider + grid
         let width = row_clues_width + 1 + grid_width;
         let height = col_clues_height + 1 + grid_height;
-        eprintln!("max_num_row_clues: {}", self.max_num_row_clues);
-        eprintln!("max_num_col_clues: {}", self.max_num_col_clues);
-        eprintln!("max_row_clue_width: {}", self.max_row_clue_width);
-        eprintln!("max_col_clue_width: {}", self.max_col_clue_width);
-        eprintln!("cell_width: {}", NonogramView::cell_width());
-        eprintln!("width: {}", width);
-        eprintln!("height: {}", height);
+        // eprintln!("max_num_row_clues: {}", self.max_num_row_clues);
+        // eprintln!("max_num_col_clues: {}", self.max_num_col_clues);
+        // eprintln!("max_row_clue_width: {}", self.max_row_clue_width);
+        // eprintln!("max_col_clue_width: {}", self.max_col_clue_width);
+        // eprintln!("cell_width: {}", NonogramView::cell_width());
+        // eprintln!("width: {}", width);
+        // eprintln!("height: {}", height);
         (width, height).into()
         // (self.nonogram.num_cols() * 2 + 1, self.nonogram.num_rows()).into()
     }
