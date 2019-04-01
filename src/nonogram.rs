@@ -100,7 +100,7 @@ impl Nonogram {
     pub fn get_col(&self, col: usize) -> &[MaybeTile] {
         let start_index = self.index_col_major(0, col);
         let end_index = self.index_col_major(0, col + 1);
-        eprintln!("start: {}, end: {}", start_index, end_index);
+        // eprintln!("start: {}, end: {}", start_index, end_index);
         &self.grid_col_major[start_index..end_index]
     }
 

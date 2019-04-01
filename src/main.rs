@@ -86,12 +86,12 @@ fn main() {
             let mut non_view = s.find_id::<NonogramView>("game").unwrap();
             non_view.toggle_filled_focused();
             if non_view.is_correct_solution() {
-                eprintln!("Is correct solution!");
+                // eprintln!("Is correct solution!");
                 s.add_layer(
                     Dialog::new().title("You won!").button("Ok", |s| s.quit()),
                 );
             } else {
-                eprintln!("Not correct solution");
+                // eprintln!("Not correct solution");
             }
             // s.find_id::<NonogramView>("game")
             //     .unwrap()
