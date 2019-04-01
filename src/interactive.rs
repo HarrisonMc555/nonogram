@@ -13,12 +13,12 @@ pub struct NonogramView {
 }
 
 impl NonogramView {
-    // const FILLED_STRING: &'static str = "▣";
-    // const NOT_FILLED_STRING: &'static str = "☒";
-    // const UNKNOWN_STRING: &'static str = "☐";
-    const FILLED_STRING: &'static str = "#";
-    const NOT_FILLED_STRING: &'static str = "X";
-    const UNKNOWN_STRING: &'static str = "_";
+    const FILLED_STRING: &'static str = "▣";
+    const NOT_FILLED_STRING: &'static str = "☒";
+    const UNKNOWN_STRING: &'static str = "☐";
+    // const FILLED_STRING: &'static str = "#";
+    // const NOT_FILLED_STRING: &'static str = "X";
+    // const UNKNOWN_STRING: &'static str = "_";
     const TOP_DIVIDER: char = '─';
     const SIDE_DIVIDER: char = '│';
     const CORNER_DIVIDER: char = '┌';
