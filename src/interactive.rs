@@ -1,7 +1,77 @@
 use crate::nonogram::{Clue, LineClues, MaybeTile, Nonogram, Tile};
+use cursive::event::{Event, Key};
+use cursive::traits::*;
 use cursive::vec::Vec2;
 use cursive::view::View;
+use cursive::views::{Dialog, LinearLayout, OnEventView, Panel};
+use cursive::Cursive;
 use cursive::Printer;
+
+pub fn main() {
+    let row_clues = vec![vec![2], vec![1, 1], vec![3]];
+    let col_clues = vec![vec![3], vec![1, 1], vec![1], vec![1]];
+    let mut non = Nonogram::new(row_clues, col_clues);
+    non.set_tile(1, 2, Tile::Filled);
+    non.set_tile(2, 2, Tile::NotFilled);
+
+    let mut siv = Cursive::default();
+
+    // cursive::logger::init();
+
+    siv.add_layer(
+        OnEventView::new(
+            Dialog::new()
+                .title("Nonogram")
+                .content(
+                    LinearLayout::horizontal().child(Panel::new(
+                        NonogramView::new(non).with_id("game"),
+                    )),
+                )
+                .button("Quit game", |s| {
+                    s.quit();
+                }),
+        )
+        .on_event(Event::Key(Key::Up), |s| {
+            s.find_id::<NonogramView>("game").unwrap().move_focus_up();
+        })
+        .on_event(Event::Key(Key::Down), |s| {
+            s.find_id::<NonogramView>("game").unwrap().move_focus_down();
+        })
+        .on_event(Event::Key(Key::Left), |s| {
+            s.find_id::<NonogramView>("game").unwrap().move_focus_left();
+        })
+        .on_event(Event::Key(Key::Right), |s| {
+            s.find_id::<NonogramView>("game")
+                .unwrap()
+                .move_focus_right();
+        })
+        .on_event(Event::Char('z'), |s| {
+            let mut non_view = s.find_id::<NonogramView>("game").unwrap();
+            non_view.toggle_filled_focused();
+            if non_view.is_correct_solution() {
+                // eprintln!("Is correct solution!");
+                s.add_layer(
+                    Dialog::new().title("You won!").button("Ok", |s| s.quit()),
+                );
+            } else {
+                // eprintln!("Not correct solution");
+            }
+            // s.find_id::<NonogramView>("game")
+            //     .unwrap()
+            //     .toggle_filled_focused();
+        })
+        .on_event(Event::Char('x'), |s| {
+            s.find_id::<NonogramView>("game")
+                .unwrap()
+                .toggle_not_filled_focused();
+        })
+        .on_event(Event::Char('c'), |s| {
+            s.find_id::<NonogramView>("game").unwrap().clear_focused();
+        }),
+    );
+
+    siv.run();
+}
 
 pub struct NonogramView {
     nonogram: Nonogram,

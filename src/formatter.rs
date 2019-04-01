@@ -1,6 +1,25 @@
 use crate::nonogram::{LineClues, MaybeTile, Nonogram, Tile};
 use std::fmt::Display;
 
+pub fn main() {
+    let row_clues = vec![vec![2], vec![1, 1], vec![3]];
+    let col_clues = vec![vec![3], vec![1, 1], vec![1], vec![1]];
+    let mut non = Nonogram::new(row_clues, col_clues);
+    let formatter = Formatter::default();
+    let string_grid = formatter.get_string_grid(&non);
+    for row in string_grid {
+        println!("{}", row.join(" "));
+    }
+
+    non.set_tile(1, 2, Tile::Filled);
+    non.set_tile(2, 2, Tile::NotFilled);
+    let formatter = Formatter::new("#", "X", "_", true);
+    let string_grid = formatter.get_string_grid(&non);
+    for row in string_grid {
+        println!("{}", row.join(" "));
+    }
+}
+
 type Grid<T> = Vec<Vec<T>>;
 
 pub struct Formatter {
