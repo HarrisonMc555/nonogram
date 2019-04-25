@@ -7,9 +7,11 @@ edition = "2018"
 [features]
 default = ["interactive"]
 interactive = ["cursive"]
+parser = ["nom"]
 
 [dependencies]
 itertools = "0.8"
 
 # Optional
 cursive = { version = "0.11", optional = true }
+nom = { version = "4.2", optional = true }
