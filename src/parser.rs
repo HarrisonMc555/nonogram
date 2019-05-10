@@ -14,29 +14,49 @@ fn complete_byte_slice_to_str<'a>(
     str::from_utf8(s)
 }
 
-// use nom::be_u8;
-// named!(
-//     tag_length_value<u8>,
-//     do_parse!(
-//         tag!( &[ 42u8 ][..] ) >>
-//                length: be_u8         >>
-//            // bytes:  take!(length) >>
-//            // (length, bytes)
-//                (length)
-//     )
-// );
+macro_rules! one_line_key_string {
+    ( $key:ident ) => {
+        named!(
+            $key<&[u8], &str>,
+            do_parse!(
+                tag!(stringify!($key))
+                    >> opt!(space)
+                    >> char!(':')
+                    >> opt!(space)
+                    >> val: map_res!(take_until!("\n"),
+                                     complete_byte_slice_to_str)
+                    >> newline
+                    >> (val)
+            )
+        );
+    };
+}
+
+one_line_key_string!(catalogue);
+
+named!(
+    catalogue2<&[u8], &str>,
+    do_parse!(
+        key: map_res!(alpha, complete_byte_slice_to_str)
+            >> opt!(space)
+            >> char!(':')
+            >> opt!(space)
+            >> val: map_res!(take_until!("\n"), complete_byte_slice_to_str)
+            >> newline
+            >> (val)
+    )
+);
 
 named!(
     oneline_key_string_value<(&str, &str)>,
     do_parse!(
         key: map_res!(alpha, complete_byte_slice_to_str)
-               >> opt!(space)
-               >> char!(':')
-               >> opt!(space)
-               >> val: map_res!(alpha, complete_byte_slice_to_str)
-               >> newline
-               >> (key, val)
-               // >> (key, key)
+            >> opt!(space)
+            >> char!(':')
+            >> opt!(space)
+            >> val: map_res!(take_until!("\n"), complete_byte_slice_to_str)
+            >> newline
+            >> (key, val)
     )
 );
 
@@ -44,6 +64,11 @@ pub fn main() {
     assert_eq!(
         oneline_key_string_value(&b"key: value\n"[..]),
         Ok((&[][..], ("key", "value")))
+    );
+
+    assert_eq!(
+        catalogue(&b"catalogue: this is my catalogue\n"[..]),
+        Ok((&[][..], "this is my catalogue"))
     );
 
     println!("parser passed");
