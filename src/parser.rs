@@ -3,6 +3,11 @@ use std::str;
 
 pub fn main() {
     assert_eq!(
+        catalogue("catalogue: \"mynonograms 1.my\"\n"),
+        Ok(("", "mynonograms 1.my"))
+    );
+
+    assert_eq!(
         license("license: \"A restrictive license\"\n"),
         Ok(("", "A restrictive license"))
     );
@@ -10,8 +15,8 @@ pub fn main() {
     assert_eq!(width("width: 48\n"), Ok(("", 48)));
 
     assert_eq!(
-        catalogue("catalogue: \"mynonograms 1.my\"\n"),
-        Ok(("", "mynonograms 1.my"))
+        rows("rows: 1a,2b,3\n"),
+        Ok(("", vec![(1, Some('a')), (2, Some('b')), (3, None)]))
     );
 
     assert_eq!(
@@ -50,6 +55,15 @@ macro_rules! named_key_and_int {
     };
 }
 
+macro_rules! named_key_and_sequence_of_lines {
+    ( $key:ident ) => {
+        named!(
+            $key <&str, Vec<(i64, Option<char>)>>,
+            call!(key_and_sequence_of_lines, stringify!($key))
+        );
+    };
+}
+
 // Keys
 named_key_and_string!(catalogue);
 named_key_and_string!(title);
@@ -59,6 +73,8 @@ named_key_and_string!(goal);
 named_key_and_possibly_unquoted_string!(license);
 named_key_and_int!(width);
 named_key_and_int!(height);
+named_key_and_sequence_of_lines!(rows);
+named_key_and_sequence_of_lines!(columns);
 
 // Helper functions
 fn key_and_string<'a>(input: &'a str, key: &str) -> IResult<&'a str, &'a str> {
@@ -103,6 +119,22 @@ fn key_and_int<'a>(input: &'a str, key: &str) -> IResult<&'a str, i64> {
     )
 }
 
+fn key_and_sequence_of_lines<'a>(
+    input: &'a str,
+    key: &str,
+) -> IResult<&'a str, Vec<(i64, Option<char>)>> {
+    do_parse!(
+        input,
+        tag!(key)
+            >> opt!(space)
+            >> tag!(":")
+            >> opt!(space)
+            >> value: call!(sequence_of_lines)
+            >> tag!("\n")
+            >> (value)
+    )
+}
+
 named!(quoted_string<&str, &str>,
        delimited!(
            tag!("\""),
@@ -117,6 +149,15 @@ named!(unquoted_string<&str, &str>,
 
 named!(int<&str, i64>,
        map_res!(digit1, |s: &str| s.parse::<i64>())
+);
+
+named!(sequence_of_lines<&str, Vec<(i64, Option<char>)>>,
+       separated_list!(tag!(","), call!(hint))
+);
+
+named!(
+    hint <&str, (i64, Option<char>)>,
+    pair!(call!(int), opt!(one_letter))
 );
 
 named!(
@@ -257,6 +298,22 @@ fn parses_width() {
 #[test]
 fn parses_height() {
     assert_eq!(height("height: 62\n"), Ok(("", 62)));
+}
+
+#[test]
+fn parses_rows() {
+    assert_eq!(
+        rows("rows: 1a,2b,3\n"),
+        Ok(("", vec![(1, Some('a')), (2, Some('b')), (3, None)]))
+    );
+}
+
+#[test]
+fn parses_columns() {
+    assert_eq!(
+        columns("columns: 17f,323,4z\n"),
+        Ok(("", vec![(17, Some('f')), (323, None), (4, Some('z'))]))
+    );
 }
 
 #[test]
