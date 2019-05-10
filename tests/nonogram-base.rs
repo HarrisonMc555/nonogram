@@ -169,6 +169,25 @@ fn empty_is_not_correct_solution() {
 }
 
 #[test]
+fn partial_solution_is_incorrect_solution() {
+    let mut non = get_small_nonogram();
+    let solution = get_correct_solution_grid();
+    for (row_i, row) in solution.iter().enumerate() {
+        for (col_i, tile) in row.iter().enumerate() {
+            // Skip every other cell and ensure that this partial solution is
+            // not considered correct
+            if (row_i + col_i) % 2 == 0 {
+                continue;
+            }
+            if *tile == non::Tile::Filled {
+                non.set_tile(row_i, col_i, non::Tile::Filled);
+            }
+            assert!(!non.is_correct_solution());
+        }
+    }
+}
+
+#[test]
 fn correct_solution_is_correct_solution() {
     let mut non = get_small_nonogram();
     let solution = get_correct_solution_grid();
