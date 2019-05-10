@@ -20,6 +20,11 @@ pub fn main() {
     );
 
     assert_eq!(
+        goal("goal: \"00110101\"\n"),
+        Ok(("", "00110101".chars().collect()))
+    );
+
+    assert_eq!(
         hex_color("#2F14DF"),
         Ok((
             "",
@@ -69,12 +74,23 @@ named_key_and_string!(catalogue);
 named_key_and_string!(title);
 named_key_and_string!(by);
 named_key_and_string!(copyright);
-named_key_and_string!(goal);
 named_key_and_possibly_unquoted_string!(license);
 named_key_and_int!(width);
 named_key_and_int!(height);
 named_key_and_sequence_of_lines!(rows);
 named_key_and_sequence_of_lines!(columns);
+named!(
+    goal<&str, Vec<char>>,
+    do_parse!(
+        tag!("goal")
+            >> opt!(space)
+            >> char!(':')
+            >> opt!(space)
+            >> value: delimited!(char!('"'), call!(goal_sequence), char!('"'))
+            >> tag!("\n")
+            >> (value)
+    )
+);
 
 // Helper functions
 fn key_and_string<'a>(input: &'a str, key: &str) -> IResult<&'a str, &'a str> {
@@ -165,6 +181,13 @@ named!(
     verify!(anychar, |c: char| c.is_ascii_lowercase())
 );
 
+named!(
+    goal_sequence<&str, Vec<char>>,
+    many0!(call!(answer))
+);
+
+named!(answer<&str, char>, alt!(one_of!("01") | call!(one_letter)));
+
 // Color
 #[derive(Debug, PartialEq)]
 pub struct Color {
@@ -241,7 +264,10 @@ fn parses_copyright() {
 
 #[test]
 fn parses_goal() {
-    assert_eq!(goal("goal: \"00110101\"\n"), Ok(("", "00110101")));
+    assert_eq!(
+        goal("goal: \"00110101\"\n"),
+        Ok(("", "00110101".chars().collect()))
+    );
 }
 
 #[test]
