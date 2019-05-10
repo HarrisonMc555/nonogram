@@ -98,7 +98,7 @@ fn key_and_string<'a>(input: &'a str, key: &str) -> IResult<&'a str, &'a str> {
         input,
         tag!(key)
             >> opt!(space)
-            >> tag!(":")
+            >> char!(':')
             >> opt!(space)
             >> value: call!(quoted_string)
             >> tag!("\n")
@@ -114,7 +114,7 @@ fn key_and_unquoted_string<'a>(
         input,
         tag!(key)
             >> opt!(space)
-            >> tag!(":")
+            >> char!(':')
             >> opt!(space)
             >> value: call!(unquoted_string)
             >> tag!("\n")
@@ -127,7 +127,7 @@ fn key_and_int<'a>(input: &'a str, key: &str) -> IResult<&'a str, i64> {
         input,
         tag!(key)
             >> opt!(space)
-            >> tag!(":")
+            >> char!(':')
             >> opt!(space)
             >> value: call!(int)
             >> tag!("\n")
@@ -143,7 +143,7 @@ fn key_and_sequence_of_lines<'a>(
         input,
         tag!(key)
             >> opt!(space)
-            >> tag!(":")
+            >> char!(':')
             >> opt!(space)
             >> value: call!(sequence_of_lines)
             >> tag!("\n")
