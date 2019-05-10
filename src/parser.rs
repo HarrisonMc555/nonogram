@@ -1,4 +1,4 @@
-use nom::{anychar, map_res, space0 as space, IResult};
+use nom::{anychar, digit1, map_res, space0 as space, IResult};
 use std::str;
 
 pub fn main() {
@@ -6,6 +6,8 @@ pub fn main() {
         license("license: \"A restrictive license\"\n"),
         Ok(("", "A restrictive license"))
     );
+
+    assert_eq!(width("width: 48\n"), Ok(("", 48)));
 
     assert_eq!(
         catalogue("catalogue: \"mynonograms 1.my\"\n"),
@@ -42,6 +44,12 @@ macro_rules! named_key_and_possibly_unquoted_string {
     };
 }
 
+macro_rules! named_key_and_int {
+    ( $key:ident ) => {
+        named!($key<&str, i64>, call!(key_and_int, stringify!($key)));
+    };
+}
+
 // Keys
 named_key_and_string!(catalogue);
 named_key_and_string!(title);
@@ -49,6 +57,8 @@ named_key_and_string!(by);
 named_key_and_string!(copyright);
 named_key_and_string!(goal);
 named_key_and_possibly_unquoted_string!(license);
+named_key_and_int!(width);
+named_key_and_int!(height);
 
 // Helper functions
 fn key_and_string<'a>(input: &'a str, key: &str) -> IResult<&'a str, &'a str> {
@@ -75,6 +85,19 @@ fn key_and_unquoted_string<'a>(
             >> tag!(":")
             >> opt!(space)
             >> value: call!(unquoted_string)
+            >> tag!("\n")
+            >> (value)
+    )
+}
+
+fn key_and_int<'a>(input: &'a str, key: &str) -> IResult<&'a str, i64> {
+    do_parse!(
+        input,
+        tag!(key)
+            >> opt!(space)
+            >> tag!(":")
+            >> opt!(space)
+            >> value: map_res!(digit1, |s: &str| s.parse::<i64>())
             >> tag!("\n")
             >> (value)
     )
@@ -190,21 +213,6 @@ fn parses_unquoted_license() {
 }
 
 #[test]
-fn parses_hex_color() {
-    assert_eq!(
-        hex_color("#2F14DF"),
-        Ok((
-            "",
-            Color {
-                red: 47,
-                green: 20,
-                blue: 223,
-            }
-        ))
-    );
-}
-
-#[test]
 fn parses_color() {
     assert_eq!(
         color("color: a #2F14DF\n"),
@@ -233,6 +241,31 @@ fn parses_color() {
                     blue: 3,
                 }
             )
+        ))
+    );
+}
+
+#[test]
+fn parses_width() {
+    assert_eq!(width("width: 48\n"), Ok(("", 48)));
+}
+
+#[test]
+fn parses_height() {
+    assert_eq!(height("height: 62\n"), Ok(("", 62)));
+}
+
+#[test]
+fn parses_hex_color() {
+    assert_eq!(
+        hex_color("#2F14DF"),
+        Ok((
+            "",
+            Color {
+                red: 47,
+                green: 20,
+                blue: 223,
+            }
         ))
     );
 }
