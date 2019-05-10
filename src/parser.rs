@@ -1,4 +1,4 @@
-use nom::{map_res, space0 as space, IResult};
+use nom::{anychar, map_res, space0 as space, IResult};
 use std::str;
 
 macro_rules! named_one_line_key_string {
@@ -52,6 +52,29 @@ named!(hex_color<&str, Color>,
                green: hex_primary >>
                blue:  hex_primary >>
                (Color { red, green, blue })
+       )
+);
+
+named!(
+    one_letter<&str, char>,
+    verify!(anychar, |c: char| c.is_ascii_lowercase())
+);
+
+// fn one_letter(input: &str) -> IResult<&str, char> {
+
+// }
+
+named!(color<&str, (char, Color)>,
+       do_parse!(
+           tag!("color")
+               >> opt!(space)
+               >> char!(':')
+               >> opt!(space)
+               >> label: call!(one_letter)
+               >> space
+               >> color_code: call!(hex_color)
+               >> char!('\n')
+               >> (label, color_code)
        )
 );
 
@@ -167,7 +190,7 @@ fn parses_unquoted_license() {
 }
 
 #[test]
-fn parses_color() {
+fn parses_hex_color() {
     assert_eq!(
         hex_color("#2F14DF"),
         Ok((
@@ -177,6 +200,39 @@ fn parses_color() {
                 green: 20,
                 blue: 223,
             }
+        ))
+    );
+}
+
+#[test]
+fn parses_color() {
+    assert_eq!(
+        color("color: a #2F14DF\n"),
+        Ok((
+            "",
+            (
+                'a',
+                Color {
+                    red: 47,
+                    green: 20,
+                    blue: 223,
+                }
+            )
+        ))
+    );
+
+    assert_eq!(
+        color("color: f #010203\n"),
+        Ok((
+            "",
+            (
+                'f',
+                Color {
+                    red: 1,
+                    green: 2,
+                    blue: 3,
+                }
+            )
         ))
     );
 }
