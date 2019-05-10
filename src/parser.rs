@@ -97,7 +97,7 @@ fn key_and_int<'a>(input: &'a str, key: &str) -> IResult<&'a str, i64> {
             >> opt!(space)
             >> tag!(":")
             >> opt!(space)
-            >> value: map_res!(digit1, |s: &str| s.parse::<i64>())
+            >> value: call!(int)
             >> tag!("\n")
             >> (value)
     )
@@ -113,6 +113,10 @@ named!(quoted_string<&str, &str>,
 
 named!(unquoted_string<&str, &str>,
        take_till!(|c: char| c == '\n')
+);
+
+named!(int<&str, i64>,
+       map_res!(digit1, |s: &str| s.parse::<i64>())
 );
 
 named!(
