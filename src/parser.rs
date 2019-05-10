@@ -16,8 +16,10 @@ macro_rules! one_line_key_string {
                     >> opt!(space)
                     >> char!(':')
                     >> opt!(space)
-                    >> val: map_res!(take_until!("\n"),
+                    >> char!('"')
+                    >> val: map_res!(take_until!("\"\n"),
                                      complete_byte_slice_to_str)
+                    >> char!('"')
                     >> newline
                     >> (val)
             )
@@ -45,14 +47,14 @@ one_line_key_string!(copyright);
 one_line_key_string!(goal);
 
 pub fn main() {
-    assert_eq!(
-        oneline_key_string_value(&b"key: value\n"[..]),
-        Ok((&[][..], ("key", "value")))
-    );
+    // assert_eq!(
+    //     oneline_key_string_value(&b"key: value\n"[..]),
+    //     Ok((&[][..], ("key", "value")))
+    // );
 
     assert_eq!(
-        catalogue(&b"catalogue: this is my catalogue\n"[..]),
-        Ok((&[][..], "this is my catalogue"))
+        catalogue(&b"catalogue: \"mynonograms 1.my\"\n"[..]),
+        Ok((&[][..], "mynonograms 1.my"))
     );
 
     println!("parser passed");
@@ -85,7 +87,9 @@ fn parses_by() {
 #[test]
 fn parses_copyright() {
     assert_eq!(
-        copyright(&b"copyright: \"(c) 1500 Cody Coder <cody@gmail.com>\"\n"[..]),
+        copyright(
+            &b"copyright: \"(c) 1500 Cody Coder <cody@gmail.com>\"\n"[..]
+        ),
         Ok((&[][..], "(c) 1500 Cody Coder <cody@gmail.com>"))
     );
 }
