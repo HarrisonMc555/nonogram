@@ -1,5 +1,39 @@
-use nom::{alpha, map_res, newline, space0 as space};
+use nom::{map_res, space0 as space, IResult};
 use std::str;
+
+macro_rules! named_one_line_key_string {
+    ( $key:ident ) => {
+        named!($key<&str>, call!(one_line_key_string, stringify!($key)));
+    };
+}
+
+macro_rules! named_one_line_key_quoted_or_unquoted_string {
+    ( $key:ident ) => {
+        named!(
+            $key<&str>,
+            alt!(
+                call!(one_line_key_string, stringify!($key))
+                    | call!(one_line_key_unquoted_string, stringify!($key))
+            )
+        );
+    };
+}
+
+named_one_line_key_string!(catalogue);
+named_one_line_key_string!(title);
+named_one_line_key_string!(by);
+named_one_line_key_string!(copyright);
+named_one_line_key_string!(goal);
+named_one_line_key_quoted_or_unquoted_string!(license);
+
+pub fn main() {
+    assert_eq!(
+        catalogue(&b"catalogue: \"mynonograms 1.my\"\n"[..]),
+        Ok((&[][..], "mynonograms 1.my"))
+    );
+
+    println!("parser passed");
+}
 
 fn complete_byte_slice_to_str<'a>(
     s: &'a [u8],
@@ -7,57 +41,37 @@ fn complete_byte_slice_to_str<'a>(
     str::from_utf8(s)
 }
 
-macro_rules! one_line_key_string {
-    ( $key:ident ) => {
-        named!(
-            $key<&[u8], &str>,
-            do_parse!(
-                tag!(stringify!($key))
-                    >> opt!(space)
-                    >> char!(':')
-                    >> opt!(space)
-                    >> char!('"')
-                    >> val: map_res!(take_until!("\"\n"),
-                                     complete_byte_slice_to_str)
-                    >> char!('"')
-                    >> newline
-                    >> (val)
-            )
-        );
-    };
+fn one_line_key_string<'a>(
+    i: &'a [u8],
+    key: &str,
+) -> IResult<&'a [u8], &'a str> {
+    do_parse!(
+        i,
+        tag!(key)
+            >> opt!(space)
+            >> char!(':')
+            >> opt!(space)
+            >> char!('"')
+            >> val: map_res!(take_until!("\"\n"), complete_byte_slice_to_str)
+            >> tag!("\"\n")
+            >> (val)
+    )
 }
 
-named!(
-    oneline_key_string_value<(&str, &str)>,
+fn one_line_key_unquoted_string<'a>(
+    i: &'a [u8],
+    key: &str,
+) -> IResult<&'a [u8], &'a str> {
     do_parse!(
-        key: map_res!(alpha, complete_byte_slice_to_str)
+        i,
+        tag!(key)
             >> opt!(space)
             >> char!(':')
             >> opt!(space)
             >> val: map_res!(take_until!("\n"), complete_byte_slice_to_str)
-            >> newline
-            >> (key, val)
+            >> char!('\n')
+            >> (val)
     )
-);
-
-one_line_key_string!(catalogue);
-one_line_key_string!(title);
-one_line_key_string!(by);
-one_line_key_string!(copyright);
-one_line_key_string!(goal);
-
-pub fn main() {
-    // assert_eq!(
-    //     oneline_key_string_value(&b"key: value\n"[..]),
-    //     Ok((&[][..], ("key", "value")))
-    // );
-
-    assert_eq!(
-        catalogue(&b"catalogue: \"mynonograms 1.my\"\n"[..]),
-        Ok((&[][..], "mynonograms 1.my"))
-    );
-
-    println!("parser passed");
 }
 
 #[test]
@@ -100,4 +114,17 @@ fn parses_goal() {
         goal(&b"goal: \"00110101\"\n"[..]),
         Ok((&[][..], "00110101"))
     );
+}
+
+#[test]
+fn parses_quoted_license() {
+    assert_eq!(
+        goal(&b"license: \"You can use this file\"\n"[..]),
+        Ok((&[][..], "You can use this file"))
+    );
+}
+
+#[test]
+fn parses_unquoted_license() {
+    assert_eq!(goal(&b"license: MIT-8.0\n"[..]), Ok((&[][..], "MIT-8.0")));
 }
