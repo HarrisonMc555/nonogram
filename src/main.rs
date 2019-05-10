@@ -24,11 +24,18 @@ extern crate nom;
 mod interactive;
 #[cfg(feature = "interactive")]
 fn main() {
-    // interactive::main();
-    println!("Interactive...");
-
     #[cfg(feature = "parser")]
     parser::main();
+
+    #[cfg(feature = "parser")]
+    let run = false;
+
+    #[cfg(not(feature = "parser"))]
+    let run = true;
+    if run {
+        interactive::main();
+        println!("Interactive...");
+    }
 }
 
 #[cfg(not(feature = "interactive"))]
