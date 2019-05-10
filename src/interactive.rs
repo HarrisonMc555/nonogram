@@ -8,6 +8,7 @@ use cursive::Cursive;
 use cursive::Printer;
 
 pub fn main() {
+    #[rustfmt::skip]
     let row_clues = vec![
         vec![2],
         vec![2, 1],
@@ -20,6 +21,7 @@ pub fn main() {
         vec![1, 2],
         vec![2],
     ];
+    #[rustfmt::skip]
     let col_clues = vec![
         vec![2, 1],
         vec![2, 1, 3],
@@ -335,6 +337,7 @@ impl NonogramView {
         }
     }
 
+    #[allow(dead_code)]
     fn get_max_string_width(&self, nonogram: &Nonogram) -> usize {
         *[
             get_max_row_clue_width(nonogram),
