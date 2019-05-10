@@ -25,8 +25,6 @@ macro_rules! one_line_key_string {
     };
 }
 
-one_line_key_string!(catalogue);
-
 named!(
     oneline_key_string_value<(&str, &str)>,
     do_parse!(
@@ -39,6 +37,12 @@ named!(
             >> (key, val)
     )
 );
+
+one_line_key_string!(catalogue);
+one_line_key_string!(title);
+one_line_key_string!(by);
+one_line_key_string!(copyright);
+one_line_key_string!(goal);
 
 pub fn main() {
     assert_eq!(
@@ -57,7 +61,39 @@ pub fn main() {
 #[test]
 fn parses_catalogue() {
     assert_eq!(
-        catalogue(&b"catalogue: this is my catalogue\n"[..]),
-        Ok((&[][..], "this is my catalogue"))
+        catalogue(&b"catalogue: \"mynonograms 1.my\"\n"[..]),
+        Ok((&[][..], "mynonograms 1.my"))
+    );
+}
+
+#[test]
+fn parses_title() {
+    assert_eq!(
+        title(&b"title: \"A really nice nonogram\"\n"[..]),
+        Ok((&[][..], "A really nice nonogram"))
+    );
+}
+
+#[test]
+fn parses_by() {
+    assert_eq!(
+        by(&b"by: \"Cody Coder\"\n"[..]),
+        Ok((&[][..], "Cody Coder"))
+    );
+}
+
+#[test]
+fn parses_copyright() {
+    assert_eq!(
+        copyright(&b"copyright: \"(c) 1500 Cody Coder <cody@gmail.com>\"\n"[..]),
+        Ok((&[][..], "(c) 1500 Cody Coder <cody@gmail.com>"))
+    );
+}
+
+#[test]
+fn parses_goal() {
+    assert_eq!(
+        goal(&b"goal: \"00110101\"\n"[..]),
+        Ok((&[][..], "00110101"))
     );
 }
