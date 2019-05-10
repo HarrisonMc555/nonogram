@@ -14,19 +14,26 @@ pub use crate::nonogram::{Nonogram, Tile};
 //         }
 //     }
 // }
-
-#[cfg(not(feature = "interactive"))]
-pub mod formatter;
+#[cfg(feature = "parser")]
+mod parser;
+#[cfg(feature = "parser")]
+#[macro_use]
+extern crate nom;
 
 #[cfg(feature = "interactive")]
 mod interactive;
+#[cfg(feature = "interactive")]
+fn main() {
+    // interactive::main();
+    println!("Interactive...");
 
+    #[cfg(feature = "parser")]
+    parser::main();
+}
+
+#[cfg(not(feature = "interactive"))]
+pub mod formatter;
 #[cfg(not(feature = "interactive"))]
 fn main() {
     formatter::main();
-}
-
-#[cfg(feature = "interactive")]
-fn main() {
-    interactive::main();
 }
