@@ -1,12 +1,5 @@
-use nom::{alpha, map_res, newline, space0 as space, IResult};
+use nom::{alpha, map_res, newline, space0 as space};
 use std::str;
-
-#[derive(Debug, PartialEq)]
-pub struct Color {
-    pub red: u8,
-    pub green: u8,
-    pub blue: u8,
-}
 
 fn complete_byte_slice_to_str<'a>(
     s: &'a [u8],
@@ -33,19 +26,6 @@ macro_rules! one_line_key_string {
 }
 
 one_line_key_string!(catalogue);
-
-named!(
-    catalogue2<&[u8], &str>,
-    do_parse!(
-        key: map_res!(alpha, complete_byte_slice_to_str)
-            >> opt!(space)
-            >> char!(':')
-            >> opt!(space)
-            >> val: map_res!(take_until!("\n"), complete_byte_slice_to_str)
-            >> newline
-            >> (val)
-    )
-);
 
 named!(
     oneline_key_string_value<(&str, &str)>,
