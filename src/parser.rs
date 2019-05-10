@@ -28,6 +28,11 @@ named_one_line_key_quoted_or_unquoted_string!(license);
 
 pub fn main() {
     assert_eq!(
+        license(&b"license: \"A restrictive license\"\n"[..]),
+        Ok((&[][..], "A restrictive license"))
+    );
+
+    assert_eq!(
         catalogue(&b"catalogue: \"mynonograms 1.my\"\n"[..]),
         Ok((&[][..], "mynonograms 1.my"))
     );
@@ -119,12 +124,15 @@ fn parses_goal() {
 #[test]
 fn parses_quoted_license() {
     assert_eq!(
-        goal(&b"license: \"You can use this file\"\n"[..]),
+        license(&b"license: \"You can use this file\"\n"[..]),
         Ok((&[][..], "You can use this file"))
     );
 }
 
 #[test]
 fn parses_unquoted_license() {
-    assert_eq!(goal(&b"license: MIT-8.0\n"[..]), Ok((&[][..], "MIT-8.0")));
+    assert_eq!(
+        license(&b"license: MIT-8.0\n"[..]),
+        Ok((&[][..], "MIT-8.0"))
+    );
 }
