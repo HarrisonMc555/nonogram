@@ -53,3 +53,11 @@ pub fn main() {
 
     println!("parser passed");
 }
+
+#[test]
+fn parses_catalogue() {
+    assert_eq!(
+        catalogue(&b"catalogue: this is my catalogue\n"[..]),
+        Ok((&[][..], "this is my catalogue"))
+    );
+}
