@@ -1,5 +1,3 @@
-use nonogram;
-
 // Structs
 struct NonogramFile {
     pub width: u64,
@@ -151,7 +149,7 @@ pub fn main() {
     let input = "key this is the value";
     println!("{:?}", first_word_and_rest(input));
 
-    println!("finished parser");
+    println!("finished main");
 }
 
 fn first_word_and_rest(input: &str) -> (&str, &str) {
