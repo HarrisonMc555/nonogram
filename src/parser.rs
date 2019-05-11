@@ -93,6 +93,20 @@ named!(
 );
 
 // Helper functions
+fn key_and_value<'a, T, F>(
+    input: &'a str,
+    key: &str,
+    value_parser: F,
+) -> IResult<&'a str, T>
+where
+    F: Fn(&str) -> IResult<&str, T>,
+{
+    do_parse!(
+        input,
+        tag!(key) >> space >> value: call!(value_parser) >> (value)
+    )
+}
+
 fn key_and_string<'a>(input: &'a str, key: &str) -> IResult<&'a str, &'a str> {
     do_parse!(
         input,
