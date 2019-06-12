@@ -33,7 +33,18 @@ pub type LineClues = Vec<Clue>;
 #[derive(Debug, Copy, Clone, Eq, PartialEq, Ord, PartialOrd)]
 pub enum Tile {
     Filled,
+    FilledColor(char),
     NotFilled,
+}
+
+impl Tile {
+    pub fn is_filled(&self) -> bool {
+        *self != Tile::NotFilled
+    }
+
+    pub fn is_not_filled(&self) -> bool {
+        *self == Tile::NotFilled
+    }
 }
 
 macro_rules! rows {
@@ -177,7 +188,7 @@ impl Nonogram {
             .iter()
             .map(|maybe_tile| maybe_tile.unwrap_or(Tile::NotFilled));
         let groups = sequence.group_by(|&t| t);
-        let filled = groups.into_iter().filter(|(key, _)| *key == Tile::Filled);
+        let filled = groups.into_iter().filter(|(tile, _)| tile.is_filled());
         filled.map(|(_, group)| group.count()).collect()
     }
 }

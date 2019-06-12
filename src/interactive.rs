@@ -332,6 +332,7 @@ impl NonogramView {
     fn maybe_tile_to_string(maybe_tile: MaybeTile) -> &'static str {
         match maybe_tile {
             Some(Tile::Filled) => NonogramView::FILLED_STRING,
+            Some(Tile::FilledColor(_)) => NonogramView::FILLED_STRING,
             Some(Tile::NotFilled) => NonogramView::NOT_FILLED_STRING,
             None => NonogramView::UNKNOWN_STRING,
         }

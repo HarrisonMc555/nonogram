@@ -14,7 +14,7 @@ pub use crate::nonogram::{Nonogram, Tile};
 //         }
 //     }
 // }
-mod nonogram_file;
+// mod nonogram_file;
 
 #[cfg(feature = "parser")]
 mod parser;
