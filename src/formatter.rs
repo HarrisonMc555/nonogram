@@ -106,8 +106,8 @@ impl Formatter {
 
     fn get_cells_string_grid(&self, non: &Nonogram) -> Grid<String> {
         non.rows()
-            .map(|row| {
-                row.iter()
+            .map(|row_iter| {
+                row_iter
                     .map(|maybe_tile| {
                         self.format_tile(maybe_tile.clone()).to_string()
                     })
@@ -181,7 +181,6 @@ impl Formatter {
     fn get_grid_line(&self, non: &Nonogram, index: usize) -> String {
         let tile_strings: Vec<_> = non
             .get_row(index)
-            .iter()
             .map(|maybe_tile| self.format_tile(*maybe_tile))
             .collect();
         tile_strings.join(" ")

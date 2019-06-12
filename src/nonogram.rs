@@ -24,6 +24,7 @@
 //! form lengths that match both the row and column "clues". Any unknown
 //! ([None]) tiles are treated as [NotFilled].
 
+use array2d::Array2D;
 use itertools::Itertools;
 
 pub type MaybeTile = Option<Tile>;
@@ -60,8 +61,9 @@ macro_rules! cols {
 }
 
 pub struct Nonogram {
-    grid_row_major: Vec<MaybeTile>,
-    grid_col_major: Vec<MaybeTile>,
+    tiles: Array2D<MaybeTile>,
+    // grid_row_major: Vec<MaybeTile>,
+    // grid_col_major: Vec<MaybeTile>,
     row_clues: Vec<LineClues>,
     col_clues: Vec<LineClues>,
 }
@@ -71,29 +73,42 @@ impl Nonogram {
         let num_rows = row_clues.len();
         let num_cols = col_clues.len();
         let num_tiles = num_rows * num_cols;
-        let grid_row_major = vec![None; num_tiles];
-        let grid_col_major = vec![None; num_tiles];
+        let tiles = Array2D::filled_with(None, num_rows, num_cols);
+        // let grid_row_major = vec![None; num_tiles];
+        // let grid_col_major = vec![None; num_tiles];
         Nonogram {
-            grid_row_major,
-            grid_col_major,
+            tiles,
+            // grid_row_major,
+            // grid_col_major,
             row_clues,
             col_clues,
         }
     }
 
-    pub fn rows(&self) -> impl Iterator<Item = &[MaybeTile]> {
-        (0..self.num_rows())
-            .map(|i| self.get_row(i))
-            .collect::<Vec<_>>()
-            .into_iter()
+    // pub fn rows(&self) -> impl Iterator<Item = &[MaybeTile]> {
+    //     (0..self.num_rows())
+    //         .map(|i| self.get_row(i))
+    //         .collect::<Vec<_>>()
+    //         .into_iter()
+    // }
+    pub fn rows(
+        &self,
+    ) -> impl Iterator<Item = impl Iterator<Item = &MaybeTile>> {
+        self.tiles.rows_iter()
     }
 
-    pub fn cols(&self) -> impl Iterator<Item = &[MaybeTile]> {
-        (0..self.num_cols())
-            .map(|i| self.get_col(i))
-            .collect::<Vec<_>>()
-            .into_iter()
+    // pub fn cols(&self) -> impl Iterator<Item = &[MaybeTile]> {
+    //     (0..self.num_cols())
+    //         .map(|i| self.get_col(i))
+    //         .collect::<Vec<_>>()
+    //         .into_iter()
+    // }
+    pub fn cols(
+        &self,
+    ) -> impl Iterator<Item = impl Iterator<Item = &MaybeTile>> {
+        self.tiles.columns_iter()
     }
+
     pub fn num_rows(&self) -> usize {
         self.row_clues.len()
     }
@@ -102,17 +117,23 @@ impl Nonogram {
         self.col_clues.len()
     }
 
-    pub fn get_row(&self, row: usize) -> &[MaybeTile] {
-        let start_index = self.index_row_major(row, 0);
-        let end_index = self.index_row_major(row + 1, 0);
-        &self.grid_row_major[start_index..end_index]
+    // pub fn get_row(&self, row: usize) -> &[MaybeTile] {
+    //     let start_index = self.index_row_major(row, 0);
+    //     let end_index = self.index_row_major(row + 1, 0);
+    //     &self.grid_row_major[start_index..end_index]
+    // }
+    pub fn get_row(&self, row: usize) -> impl Iterator<Item = &MaybeTile> {
+        self.tiles.row_iter(row)
     }
 
-    pub fn get_col(&self, col: usize) -> &[MaybeTile] {
-        let start_index = self.index_col_major(0, col);
-        let end_index = self.index_col_major(0, col + 1);
-        // eprintln!("start: {}, end: {}", start_index, end_index);
-        &self.grid_col_major[start_index..end_index]
+    // pub fn get_col(&self, col: usize) -> &[MaybeTile] {
+    //     let start_index = self.index_col_major(0, col);
+    //     let end_index = self.index_col_major(0, col + 1);
+    //     // eprintln!("start: {}, end: {}", start_index, end_index);
+    //     &self.grid_col_major[start_index..end_index]
+    // }
+    pub fn get_col(&self, col: usize) -> impl Iterator<Item = &MaybeTile> {
+        self.tiles.row_iter(col)
     }
 
     pub fn row_clues(&self) -> &[LineClues] {
@@ -132,22 +153,25 @@ impl Nonogram {
     }
 
     pub fn get_tile(&self, row: usize, col: usize) -> MaybeTile {
-        let index_row_major = self.index_row_major(row, col);
-        self.grid_row_major[index_row_major]
+        // let index_row_major = self.index_row_major(row, col);
+        // self.grid_row_major[index_row_major]
+        self.tiles[(row, col)]
     }
 
     pub fn set_tile(&mut self, row: usize, col: usize, tile: Tile) {
-        let index_row_major = self.index_row_major(row, col);
-        self.grid_row_major[index_row_major] = Some(tile);
-        let index_col_major = self.index_col_major(row, col);
-        self.grid_col_major[index_col_major] = Some(tile);
+        // let index_row_major = self.index_row_major(row, col);
+        // self.grid_row_major[index_row_major] = Some(tile);
+        // let index_col_major = self.index_col_major(row, col);
+        // self.grid_col_major[index_col_major] = Some(tile);
+        self.tiles[(row, col)] = Some(tile);
     }
 
     pub fn unset_tile(&mut self, row: usize, col: usize) {
-        let index_row_major = self.index_row_major(row, col);
-        self.grid_row_major[index_row_major] = None;
-        let index_col_major = self.index_col_major(row, col);
-        self.grid_col_major[index_col_major] = None;
+        // let index_row_major = self.index_row_major(row, col);
+        // self.grid_row_major[index_row_major] = None;
+        // let index_col_major = self.index_col_major(row, col);
+        // self.grid_col_major[index_col_major] = None;
+        self.tiles[(row, col)] = None;
     }
 
     pub fn is_correct_solution(&self) -> bool {
@@ -183,9 +207,19 @@ impl Nonogram {
             .collect()
     }
 
-    fn sequence_lengths(sequence: &[MaybeTile]) -> LineClues {
+    // fn sequence_lengths(sequence: &[MaybeTile]) -> LineClues {
+    //     let sequence = sequence
+    //         .iter()
+    //         .map(|maybe_tile| maybe_tile.unwrap_or(Tile::NotFilled));
+    //     let groups = sequence.group_by(|&t| t);
+    //     let filled = groups.into_iter().filter(|(tile, _)| tile.is_filled());
+    //     filled.map(|(_, group)| group.count()).collect()
+    // }
+    fn sequence_lengths<'a, I>(sequence: I) -> LineClues
+    where
+        I: Iterator<Item = &'a MaybeTile>,
+    {
         let sequence = sequence
-            .iter()
             .map(|maybe_tile| maybe_tile.unwrap_or(Tile::NotFilled));
         let groups = sequence.group_by(|&t| t);
         let filled = groups.into_iter().filter(|(tile, _)| tile.is_filled());

@@ -10,6 +10,7 @@ interactive = ["cursive"]
 parser = ["nom"]
 
 [dependencies]
+array2d = { version = "0.2", path = "../array2d" }
 itertools = "0.8"
 
 # Optional
