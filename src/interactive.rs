@@ -22,14 +22,14 @@ pub fn main() {
         vec![2],
     ];
     #[rustfmt::skip]
-    let col_clues = vec![
+    let column_clues = vec![
         vec![2, 1],
         vec![2, 1, 3],
         vec![7],
         vec![1, 3],
         vec![2, 1],
     ];
-    let mut non = Nonogram::new(row_clues, col_clues);
+    let mut non = Nonogram::new(row_clues, column_clues);
     non.set_tile(1, 2, Tile::Filled);
     non.set_tile(2, 2, Tile::NotFilled);
 
@@ -91,8 +91,8 @@ pub struct NonogramView {
     focus: (usize, usize),
     max_num_row_clues: usize,
     max_row_clue_width: usize,
-    max_num_col_clues: usize,
-    max_col_clue_width: usize,
+    max_num_column_clues: usize,
+    max_column_clue_width: usize,
 }
 
 impl NonogramView {
@@ -110,8 +110,8 @@ impl NonogramView {
         NonogramView {
             max_num_row_clues: get_max_num_row_clues(&nonogram),
             max_row_clue_width: get_max_row_clue_width(&nonogram),
-            max_num_col_clues: get_max_num_col_clues(&nonogram),
-            max_col_clue_width: get_max_col_clue_width(&nonogram),
+            max_num_column_clues: get_max_num_column_clues(&nonogram),
+            max_column_clue_width: get_max_column_clue_width(&nonogram),
             nonogram,
             focus: (0, 0),
         }
@@ -134,40 +134,40 @@ impl NonogramView {
     }
 
     pub fn clear_focused(&mut self) {
-        let (row, col) = self.focus;
-        self.nonogram.unset_tile(row, col);
+        let (row, column) = self.focus;
+        self.nonogram.unset_tile(row, column);
     }
 
     pub fn move_focus_up(&mut self) {
-        let (mut row, col) = self.focus;
+        let (mut row, column) = self.focus;
         if row > 0 {
             row -= 1;
         }
-        self.focus = (row, col);
+        self.focus = (row, column);
     }
 
     pub fn move_focus_down(&mut self) {
-        let (mut row, col) = self.focus;
+        let (mut row, column) = self.focus;
         if row < self.nonogram.num_rows() - 1 {
             row += 1;
         }
-        self.focus = (row, col);
+        self.focus = (row, column);
     }
 
     pub fn move_focus_left(&mut self) {
-        let (row, mut col) = self.focus;
-        if col > 0 {
-            col -= 1;
+        let (row, mut column) = self.focus;
+        if column > 0 {
+            column -= 1;
         }
-        self.focus = (row, col);
+        self.focus = (row, column);
     }
 
     pub fn move_focus_right(&mut self) {
-        let (row, mut col) = self.focus;
-        if col < self.nonogram.num_cols() - 1 {
-            col += 1;
+        let (row, mut column) = self.focus;
+        if column < self.nonogram.num_cols() - 1 {
+            column += 1;
         }
-        self.focus = (row, col);
+        self.focus = (row, column);
     }
 
     pub fn is_correct_solution(&self) -> bool {
@@ -175,13 +175,13 @@ impl NonogramView {
     }
 
     fn get_focused(&self) -> MaybeTile {
-        let (row, col) = self.focus;
-        self.nonogram.get_tile(row, col)
+        let (row, column) = self.focus;
+        self.nonogram.get_tile(row, column)
     }
 
     fn set_focused(&mut self, tile: Tile) {
-        let (row, col) = self.focus;
-        self.nonogram.set_tile(row, col, tile);
+        let (row, column) = self.focus;
+        self.nonogram.set_tile(row, column, tile);
     }
 
     fn draw_all_row_clues(&self, printer: &Printer) {
@@ -190,9 +190,9 @@ impl NonogramView {
         }
     }
 
-    fn draw_all_col_clues(&self, printer: &Printer) {
+    fn draw_all_column_clues(&self, printer: &Printer) {
         for i in 0..self.nonogram.num_cols() {
-            self.draw_col_clues(i, printer);
+            self.draw_column_clues(i, printer);
         }
     }
 
@@ -200,7 +200,7 @@ impl NonogramView {
         let row = self.nonogram.row_clues_at(row_index);
         let num_blank_spaces = self.max_num_row_clues - row.len();
         let x_offset = num_blank_spaces * self.row_clue_space_width();
-        let y_offset = self.max_num_col_clues + 1;
+        let y_offset = self.max_num_column_clues + 1;
         for (j, clue) in row.iter().enumerate() {
             let x = x_offset + self.row_clue_space_width() * j;
             let y = y_offset + row_index;
@@ -214,19 +214,19 @@ impl NonogramView {
         }
     }
 
-    fn draw_col_clues(&self, col_index: usize, printer: &Printer) {
-        let col = self.nonogram.col_clues_at(col_index);
-        let num_blank_spaces = self.max_num_col_clues - col.len();
+    fn draw_column_clues(&self, column_index: usize, printer: &Printer) {
+        let column = self.nonogram.column_clues_at(column_index);
+        let num_blank_spaces = self.max_num_column_clues - column.len();
         let x_offset = self.max_num_row_clues * self.row_clue_space_width();
         let y_offset = num_blank_spaces;
-        for (j, clue) in col.iter().enumerate() {
-            let x = x_offset + col_index * self.col_clue_space_width();
+        for (j, clue) in column.iter().enumerate() {
+            let x = x_offset + column_index * self.column_clue_space_width();
             let y = y_offset + j;
             let position = (x, y);
             NonogramView::draw_clue(
                 *clue,
                 position,
-                self.col_clue_space_width(),
+                self.column_clue_space_width(),
                 printer,
             );
         }
@@ -261,11 +261,11 @@ impl NonogramView {
         location: (usize, usize),
         printer: &Printer,
     ) {
-        let (row, col) = location;
-        // all row/col clues + 1 for divider
+        let (row, column) = location;
+        // all row/column clues + 1 for divider
         let x_offset = self.max_num_row_clues * self.row_clue_space_width() + 1;
-        let y_offset = self.max_num_col_clues + 1;
-        let x = x_offset + NonogramView::cell_width() * col;
+        let y_offset = self.max_num_column_clues + 1;
+        let x = x_offset + NonogramView::cell_width() * column;
         let y = y_offset + row;
         let position = (x, y);
         // eprintln!("position: {:?}", position);
@@ -291,7 +291,7 @@ impl NonogramView {
 
     fn draw_top_border(&self, printer: &Printer) {
         let x = self.max_num_row_clues * self.row_clue_space_width() + 1;
-        let y = self.max_num_col_clues;
+        let y = self.max_num_column_clues;
         let position = (x, y);
         let width = self.nonogram.num_cols() * NonogramView::cell_width();
         let s = NonogramView::TOP_DIVIDER.to_string().repeat(width);
@@ -300,7 +300,7 @@ impl NonogramView {
 
     fn draw_side_border(&self, printer: &Printer) {
         let x = self.max_num_row_clues * self.row_clue_space_width();
-        let y_offset = self.max_num_col_clues + 1;
+        let y_offset = self.max_num_column_clues + 1;
         let s = NonogramView::SIDE_DIVIDER.to_string();
         // eprintln!("s: {}", s);
         for j in 0..self.nonogram.num_rows() {
@@ -313,7 +313,7 @@ impl NonogramView {
 
     fn draw_corner_border(&self, printer: &Printer) {
         let x = self.max_num_row_clues * self.row_clue_space_width();
-        let y = self.max_num_col_clues;
+        let y = self.max_num_column_clues;
         let position = (x, y);
         let s = NonogramView::CORNER_DIVIDER.to_string();
         printer.print(position, &s);
@@ -323,8 +323,8 @@ impl NonogramView {
         self.max_row_clue_width + 1
     }
 
-    fn col_clue_space_width(&self) -> usize {
-        self.max_col_clue_width + 1
+    fn column_clue_space_width(&self) -> usize {
+        self.max_column_clue_width + 1
     }
 
     fn maybe_tile_to_string(maybe_tile: MaybeTile) -> &'static str {
@@ -340,7 +340,7 @@ impl NonogramView {
     fn get_max_string_width(&self, nonogram: &Nonogram) -> usize {
         *[
             get_max_row_clue_width(nonogram),
-            get_max_col_clue_width(nonogram),
+            get_max_column_clue_width(nonogram),
             NonogramView::get_max_cell_width(),
         ]
         .into_iter()
@@ -379,7 +379,7 @@ impl View for NonogramView {
         //     }
         // }
         self.draw_all_row_clues(printer);
-        self.draw_all_col_clues(printer);
+        self.draw_all_column_clues(printer);
         self.draw_borders(printer);
         self.draw_grid(printer);
     }
@@ -387,16 +387,16 @@ impl View for NonogramView {
     fn required_size(&mut self, _constraint: Vec2) -> Vec2 {
         let row_clues_width =
             self.max_num_row_clues * self.row_clue_space_width();
-        let col_clues_height = self.max_num_col_clues;
+        let column_clues_height = self.max_num_column_clues;
         let grid_width = self.nonogram.num_cols() * NonogramView::cell_width();
         let grid_height = self.nonogram.num_rows();
         // Clues + divider + grid
         let width = row_clues_width + 1 + grid_width;
-        let height = col_clues_height + 1 + grid_height;
+        let height = column_clues_height + 1 + grid_height;
         // eprintln!("max_num_row_clues: {}", self.max_num_row_clues);
-        // eprintln!("max_num_col_clues: {}", self.max_num_col_clues);
+        // eprintln!("max_num_column_clues: {}", self.max_num_column_clues);
         // eprintln!("max_row_clue_width: {}", self.max_row_clue_width);
-        // eprintln!("max_col_clue_width: {}", self.max_col_clue_width);
+        // eprintln!("max_column_clue_width: {}", self.max_column_clue_width);
         // eprintln!("cell_width: {}", NonogramView::cell_width());
         // eprintln!("width: {}", width);
         // eprintln!("height: {}", height);
@@ -409,16 +409,16 @@ fn get_max_num_row_clues(nonogram: &Nonogram) -> usize {
     get_max_num_clues(nonogram.row_clues())
 }
 
-fn get_max_num_col_clues(nonogram: &Nonogram) -> usize {
-    get_max_num_clues(nonogram.col_clues())
+fn get_max_num_column_clues(nonogram: &Nonogram) -> usize {
+    get_max_num_clues(nonogram.column_clues())
 }
 
 fn get_max_row_clue_width(nonogram: &Nonogram) -> usize {
     get_max_clue_width(nonogram.row_clues())
 }
 
-fn get_max_col_clue_width(nonogram: &Nonogram) -> usize {
-    get_max_clue_width(nonogram.col_clues())
+fn get_max_column_clue_width(nonogram: &Nonogram) -> usize {
+    get_max_clue_width(nonogram.column_clues())
 }
 
 fn get_max_clue_width(clues: &[LineClues]) -> usize {

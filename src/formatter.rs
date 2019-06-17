@@ -3,8 +3,8 @@ use std::fmt::Display;
 
 pub fn main() {
     let row_clues = vec![vec![2], vec![1, 1], vec![3]];
-    let col_clues = vec![vec![3], vec![1, 1], vec![1], vec![1]];
-    let mut non = Nonogram::new(row_clues, col_clues);
+    let column_clues = vec![vec![3], vec![1, 1], vec![1], vec![1]];
+    let mut non = Nonogram::new(row_clues, column_clues);
     let formatter = Formatter::default();
     let string_grid = formatter.get_string_grid(&non);
     for row in string_grid {
@@ -93,13 +93,13 @@ impl Formatter {
     }
 
     fn get_cols_clue_string_grid(non: &Nonogram) -> Grid<String> {
-        let max_num_clues = get_max_num_col_clues(non);
-        let max_col_clue_width = get_max_col_clue_width(non);
-        let clue_string_grid = get_string_grid(non.col_clues());
+        let max_num_clues = get_max_num_column_clues(non);
+        let max_column_clue_width = get_max_column_clue_width(non);
+        let clue_string_grid = get_string_grid(non.column_clues());
         let transposed = Formatter::waterfill_clue_string_grid(
             &clue_string_grid,
             max_num_clues,
-            max_col_clue_width,
+            max_column_clue_width,
         );
         transpose(transposed)
     }
@@ -153,19 +153,19 @@ impl Formatter {
             return grid_lines;
         }
         let row_lines = self.get_row_clue_lines(non);
-        let col_lines = self.get_col_clue_lines(non);
+        let column_lines = self.get_column_clue_lines(non);
         let max_row_width = row_lines[0].len();
-        let max_col_width = col_lines[0].len();
+        let max_column_width = column_lines[0].len();
         let leading_spaces = " ".repeat(max_row_width);
-        let col_lines_with_leading_spaces = col_lines
+        let column_lines_with_leading_spaces = column_lines
             .iter()
             .map(|line| format!("{}  {}", leading_spaces, line));
         let horizontal_line =
-            format!("{}  {}", leading_spaces, "_".repeat(max_col_width));
+            format!("{}  {}", leading_spaces, "_".repeat(max_column_width));
         let row_and_grid_lines = row_lines.iter().zip(grid_lines.iter()).map(
             |(row_line, grid_line)| format!("{} |{}", row_line, grid_line),
         );
-        col_lines_with_leading_spaces
+        column_lines_with_leading_spaces
             .chain(Some(horizontal_line))
             .chain(row_and_grid_lines)
             .collect()
@@ -243,12 +243,12 @@ impl Formatter {
         format!("{}{}", leading_spaces, clues_string)
     }
 
-    fn get_col_clue_lines(&self, non: &Nonogram) -> Vec<String> {
-        let max_num_clues = non.col_clues().iter().map(Vec::len).max().unwrap();
+    fn get_column_clue_lines(&self, non: &Nonogram) -> Vec<String> {
+        let max_num_clues = non.column_clues().iter().map(Vec::len).max().unwrap();
         let clue_strings: Grid<_> = non
-            .col_clues()
+            .column_clues()
             .iter()
-            .map(|col| col.iter().map(|clue| clue.to_string()).collect())
+            .map(|column| column.iter().map(|clue| clue.to_string()).collect())
             .collect();
         // String::len returns number of bytes, but we're restricting this to
         // the formatted version of a usize, so that's the number of
@@ -263,7 +263,7 @@ impl Formatter {
         let filler_spaces = " ".repeat(clue_width);
         (0..max_num_clues)
             .map(|i| {
-                Formatter::format_col_clues_at(
+                Formatter::format_column_clues_at(
                     &clue_strings,
                     i,
                     max_num_clues,
@@ -273,20 +273,20 @@ impl Formatter {
             .collect()
     }
 
-    fn format_col_clues_at(
-        col_clue_strings: &[Vec<String>],
+    fn format_column_clues_at(
+        column_clue_strings: &[Vec<String>],
         index: usize,
         max_num_clues: usize,
         filler_spaces: &str,
     ) -> String {
-        let strings: Vec<_> = col_clue_strings
+        let strings: Vec<_> = column_clue_strings
             .iter()
-            .map(|col| {
-                if index + col.len() < max_num_clues {
+            .map(|column| {
+                if index + column.len() < max_num_clues {
                     return filler_spaces.to_string();
                 }
-                let i = index + col.len() - max_num_clues;
-                col.get(i)
+                let i = index + column.len() - max_num_clues;
+                column.get(i)
                     .cloned()
                     .unwrap_or_else(|| filler_spaces.to_string())
             })
@@ -314,12 +314,12 @@ fn get_max_row_clue_width(nonogram: &Nonogram) -> usize {
     get_max_clue_width(nonogram.row_clues())
 }
 
-fn get_max_num_col_clues(nonogram: &Nonogram) -> usize {
-    get_max_num_clues(nonogram.col_clues())
+fn get_max_num_column_clues(nonogram: &Nonogram) -> usize {
+    get_max_num_clues(nonogram.column_clues())
 }
 
-fn get_max_col_clue_width(nonogram: &Nonogram) -> usize {
-    get_max_clue_width(nonogram.col_clues())
+fn get_max_column_clue_width(nonogram: &Nonogram) -> usize {
+    get_max_clue_width(nonogram.column_clues())
 }
 
 fn get_max_clue_width(clues: &[LineClues]) -> usize {

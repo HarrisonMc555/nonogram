@@ -14,7 +14,7 @@ fn get_small_row_clues() -> Vec<nonogram::nonogram::LineClues> {
 /// # # _ _
 /// # _ _ #
 /// # # # _
-fn get_small_col_clues() -> Vec<nonogram::nonogram::LineClues> {
+fn get_small_column_clues() -> Vec<nonogram::nonogram::LineClues> {
     vec![vec![3], vec![1, 1], vec![1], vec![1]]
 }
 
@@ -25,8 +25,8 @@ fn get_small_col_clues() -> Vec<nonogram::nonogram::LineClues> {
 /// # # # _
 fn get_small_nonogram() -> non::Nonogram {
     let row_clues = get_small_row_clues();
-    let col_clues = get_small_col_clues();
-    non::Nonogram::new(row_clues, col_clues)
+    let column_clues = get_small_column_clues();
+    non::Nonogram::new(row_clues, column_clues)
 }
 
 fn get_correct_solution_grid() -> Vec<Vec<non::Tile>> {
@@ -50,8 +50,8 @@ fn can_get_dimensions() {
 fn new_is_all_none() {
     let non = get_small_nonogram();
     for row in 0..non.num_rows() {
-        for col in 0..non.num_cols() {
-            assert_eq!(non.get_tile(row, col), None);
+        for column in 0..non.num_cols() {
+            assert_eq!(non.get_tile(row, column), None);
         }
     }
 }
@@ -60,13 +60,13 @@ fn new_is_all_none() {
 fn can_set_tile_filled() {
     let mut non = get_small_nonogram();
     let my_row_index = 2;
-    let my_col_index = 1;
+    let my_column_index = 1;
     let my_tile = non::Tile::Filled;
-    non.set_tile(my_row_index, my_col_index, my_tile);
+    non.set_tile(my_row_index, my_column_index, my_tile);
     for row in 0..non.num_rows() {
-        for col in 0..non.num_cols() {
-            let act_tile = non.get_tile(row, col);
-            let exp_tile = if row == my_row_index && col == my_col_index {
+        for column in 0..non.num_cols() {
+            let act_tile = non.get_tile(row, column);
+            let exp_tile = if row == my_row_index && column == my_column_index {
                 Some(my_tile)
             } else {
                 None
@@ -80,13 +80,13 @@ fn can_set_tile_filled() {
 fn can_set_tile_not_filled() {
     let mut non = get_small_nonogram();
     let my_row_index = 2;
-    let my_col_index = 1;
+    let my_column_index = 1;
     let my_tile = non::Tile::NotFilled;
-    non.set_tile(my_row_index, my_col_index, my_tile);
+    non.set_tile(my_row_index, my_column_index, my_tile);
     for row in 0..non.num_rows() {
-        for col in 0..non.num_cols() {
-            let act_tile = non.get_tile(row, col);
-            let exp_tile = if row == my_row_index && col == my_col_index {
+        for column in 0..non.num_cols() {
+            let act_tile = non.get_tile(row, column);
+            let exp_tile = if row == my_row_index && column == my_column_index {
                 Some(my_tile)
             } else {
                 None
@@ -100,13 +100,13 @@ fn can_set_tile_not_filled() {
 fn can_unset_tile() {
     let mut non = get_small_nonogram();
     let my_row_index = 2;
-    let my_col_index = 1;
+    let my_column_index = 1;
     let my_tile = non::Tile::Filled;
-    non.set_tile(my_row_index, my_col_index, my_tile);
+    non.set_tile(my_row_index, my_column_index, my_tile);
     for row in 0..non.num_rows() {
-        for col in 0..non.num_cols() {
-            let act_tile = non.get_tile(row, col);
-            let exp_tile = if row == my_row_index && col == my_col_index {
+        for column in 0..non.num_cols() {
+            let act_tile = non.get_tile(row, column);
+            let exp_tile = if row == my_row_index && column == my_column_index {
                 Some(my_tile)
             } else {
                 None
@@ -114,10 +114,10 @@ fn can_unset_tile() {
             assert_eq!(act_tile, exp_tile);
         }
     }
-    non.unset_tile(my_row_index, my_col_index);
+    non.unset_tile(my_row_index, my_column_index);
     for row in 0..non.num_rows() {
-        for col in 0..non.num_cols() {
-            assert_eq!(non.get_tile(row, col), None);
+        for column in 0..non.num_cols() {
+            assert_eq!(non.get_tile(row, column), None);
         }
     }
 }
@@ -130,9 +130,9 @@ fn can_get_rows() {
         assert!(non.get_row(i).eq(empty_row.iter()));
     }
     let row_index = 1;
-    let col_index = 2;
+    let column_index = 2;
     let altered_row = [None, None, Some(non::Tile::Filled), None];
-    non.set_tile(row_index, col_index, non::Tile::Filled);
+    non.set_tile(row_index, column_index, non::Tile::Filled);
     for i in 0..non.num_rows() {
         if i == row_index {
             assert!(non.get_row(i).eq(altered_row.iter()));
@@ -145,27 +145,27 @@ fn can_get_rows() {
 #[test]
 fn can_get_cols() {
     let mut non = get_small_nonogram();
-    let empty_col = [None; 3];
+    let empty_column = [None; 3];
     println!("I am about to fail");
     println!("{:?}", non);
 
     for i in 0..non.num_cols() {
         println!(
-            "non.get_col({}) = {:?}",
+            "non.get_column({}) = {:?}",
             i,
-            non.get_col(i).collect::<Vec<_>>()
+            non.get_column(i).collect::<Vec<_>>()
         );
-        assert!(non.get_col(i).eq(empty_col.iter()));
+        assert!(non.get_column(i).eq(empty_column.iter()));
     }
     let row_index = 1;
-    let col_index = 2;
-    let altered_col = [None, Some(non::Tile::Filled), None];
-    non.set_tile(row_index, col_index, non::Tile::Filled);
+    let column_index = 2;
+    let altered_column = [None, Some(non::Tile::Filled), None];
+    non.set_tile(row_index, column_index, non::Tile::Filled);
     for i in 0..non.num_cols() {
-        if i == col_index {
-            assert!(non.get_col(i).eq(altered_col.iter()));
+        if i == column_index {
+            assert!(non.get_column(i).eq(altered_column.iter()));
         } else {
-            assert!(non.get_col(i).eq(empty_col.iter()));
+            assert!(non.get_column(i).eq(empty_column.iter()));
         }
     }
 }
@@ -181,14 +181,14 @@ fn partial_solution_is_incorrect() {
     let mut non = get_small_nonogram();
     let solution = get_correct_solution_grid();
     for (row_i, row) in solution.iter().enumerate() {
-        for (col_i, tile) in row.iter().enumerate() {
+        for (column_i, tile) in row.iter().enumerate() {
             // Skip every other cell and ensure that this partial solution is
             // not considered correct.
-            if (row_i + col_i) % 2 == 0 {
+            if (row_i + column_i) % 2 == 0 {
                 continue;
             }
             if *tile == non::Tile::Filled {
-                non.set_tile(row_i, col_i, non::Tile::Filled);
+                non.set_tile(row_i, column_i, non::Tile::Filled);
             }
             assert!(!non.is_correct_solution());
         }
@@ -200,10 +200,10 @@ fn incorrect_solution_is_incorrect() {
     let mut non = get_small_nonogram();
     let solution = get_correct_solution_grid();
     for (row_i, row) in solution.iter().enumerate() {
-        for (col_i, _) in row.iter().enumerate() {
+        for (column_i, _) in row.iter().enumerate() {
             // Fill every other tile. This should be incorrect.
-            if (row_i + col_i) % 2 == 0 {
-                non.set_tile(row_i, col_i, non::Tile::Filled);
+            if (row_i + column_i) % 2 == 0 {
+                non.set_tile(row_i, column_i, non::Tile::Filled);
             }
             assert!(!non.is_correct_solution());
         }
@@ -216,9 +216,9 @@ fn correct_solution_is_correct() {
     let solution = get_correct_solution_grid();
     let last_filled_cell_indices = (2, 2);
     for (row_i, row) in solution.iter().enumerate() {
-        for (col_i, tile) in row.iter().enumerate() {
+        for (column_i, tile) in row.iter().enumerate() {
             if *tile == non::Tile::Filled {
-                non.set_tile(row_i, col_i, non::Tile::Filled);
+                non.set_tile(row_i, column_i, non::Tile::Filled);
             }
 
             // If we have not yet set all of the filled tiles, then it should
@@ -226,7 +226,7 @@ fn correct_solution_is_correct() {
             // tiles, it *should* be considered correct (regardless of whether
             // or not the last tiles are unfilled or blank (None)).
             let should_be_correct_solution =
-                (row_i, col_i) >= last_filled_cell_indices;
+                (row_i, column_i) >= last_filled_cell_indices;
             assert_eq!(non.is_correct_solution(), should_be_correct_solution);
         }
     }
@@ -238,11 +238,11 @@ fn blank_tiles_do_not_affect_correct_solution() {
     let solution = get_correct_solution_grid();
     let last_filled_cell_indices = (2, 2);
     for (row_i, row) in solution.iter().enumerate() {
-        for (col_i, tile) in row.iter().enumerate() {
+        for (column_i, tile) in row.iter().enumerate() {
             if *tile == non::Tile::Filled {
-                non.set_tile(row_i, col_i, non::Tile::Filled);
+                non.set_tile(row_i, column_i, non::Tile::Filled);
             } else {
-                non.set_tile(row_i, col_i, non::Tile::NotFilled);
+                non.set_tile(row_i, column_i, non::Tile::NotFilled);
             }
 
             // If we have not yet set all of the filled tiles, then it should
@@ -250,7 +250,7 @@ fn blank_tiles_do_not_affect_correct_solution() {
             // tiles, it *should* be considered correct (regardless of whether
             // or not the last tiles are unfilled or blank (None)).
             let should_be_correct_solution =
-                (row_i, col_i) >= last_filled_cell_indices;
+                (row_i, column_i) >= last_filled_cell_indices;
             assert_eq!(non.is_correct_solution(), should_be_correct_solution);
         }
     }

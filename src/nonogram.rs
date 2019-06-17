@@ -52,18 +52,18 @@ impl Tile {
 pub struct Nonogram {
     tiles: Array2D<MaybeTile>,
     row_clues: Vec<LineClues>,
-    col_clues: Vec<LineClues>,
+    column_clues: Vec<LineClues>,
 }
 
 impl Nonogram {
-    pub fn new(row_clues: Vec<LineClues>, col_clues: Vec<LineClues>) -> Self {
+    pub fn new(row_clues: Vec<LineClues>, column_clues: Vec<LineClues>) -> Self {
         let num_rows = row_clues.len();
-        let num_cols = col_clues.len();
+        let num_cols = column_clues.len();
         let tiles = Array2D::filled_with(None, num_rows, num_cols);
         Nonogram {
             tiles,
             row_clues,
-            col_clues,
+            column_clues,
         }
     }
 
@@ -84,48 +84,48 @@ impl Nonogram {
     }
 
     pub fn num_cols(&self) -> usize {
-        self.col_clues.len()
+        self.column_clues.len()
     }
 
     pub fn get_row(&self, row: usize) -> impl Iterator<Item = &MaybeTile> {
         self.tiles.row_iter(row)
     }
 
-    pub fn get_col(&self, col: usize) -> impl Iterator<Item = &MaybeTile> {
-        self.tiles.column_iter(col)
+    pub fn get_column(&self, column: usize) -> impl Iterator<Item = &MaybeTile> {
+        self.tiles.column_iter(column)
     }
 
     pub fn row_clues(&self) -> &[LineClues] {
         &self.row_clues
     }
 
-    pub fn col_clues(&self) -> &[LineClues] {
-        &self.col_clues
+    pub fn column_clues(&self) -> &[LineClues] {
+        &self.column_clues
     }
 
     pub fn row_clues_at(&self, index: usize) -> &LineClues {
         &self.row_clues[index]
     }
 
-    pub fn col_clues_at(&self, index: usize) -> &LineClues {
-        &self.col_clues[index]
+    pub fn column_clues_at(&self, index: usize) -> &LineClues {
+        &self.column_clues[index]
     }
 
-    pub fn get_tile(&self, row: usize, col: usize) -> MaybeTile {
-        self.tiles[(row, col)]
+    pub fn get_tile(&self, row: usize, column: usize) -> MaybeTile {
+        self.tiles[(row, column)]
     }
 
-    pub fn set_tile(&mut self, row: usize, col: usize, tile: Tile) {
-        self.tiles[(row, col)] = Some(tile);
+    pub fn set_tile(&mut self, row: usize, column: usize, tile: Tile) {
+        self.tiles[(row, column)] = Some(tile);
     }
 
-    pub fn unset_tile(&mut self, row: usize, col: usize) {
-        self.tiles[(row, col)] = None;
+    pub fn unset_tile(&mut self, row: usize, column: usize) {
+        self.tiles[(row, column)] = None;
     }
 
     pub fn is_correct_solution(&self) -> bool {
         self.row_clues == self.row_sequence_lengths()
-            && self.col_clues == self.col_sequence_lengths()
+            && self.column_clues == self.column_sequence_lengths()
     }
 
     fn row_sequence_lengths(&self) -> Vec<LineClues> {
@@ -135,7 +135,7 @@ impl Nonogram {
             .collect()
     }
 
-    fn col_sequence_lengths(&self) -> Vec<LineClues> {
+    fn column_sequence_lengths(&self) -> Vec<LineClues> {
         self.tiles
             .columns_iter()
             .map(|column_iter| Nonogram::sequence_lengths(column_iter))
