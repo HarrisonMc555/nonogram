@@ -5,7 +5,7 @@ use nonogram as non;
 /// # # _ _
 /// # _ _ #
 /// # # # _
-fn get_small_row_clues() -> Vec<nonogram::nonogram::LineClues> {
+fn get_small_row_clues() -> Vec<non::nonogram::LineClues> {
     vec![vec![2], vec![1, 1], vec![3]]
 }
 
@@ -14,7 +14,7 @@ fn get_small_row_clues() -> Vec<nonogram::nonogram::LineClues> {
 /// # # _ _
 /// # _ _ #
 /// # # # _
-fn get_small_column_clues() -> Vec<nonogram::nonogram::LineClues> {
+fn get_small_column_clues() -> Vec<non::nonogram::LineClues> {
     vec![vec![3], vec![1, 1], vec![1], vec![1]]
 }
 
@@ -255,12 +255,3 @@ fn blank_tiles_do_not_affect_correct_solution() {
         }
     }
 }
-
-// fn iter_equal<T, I1, I2>(mut iter1: I1, mut iter2: I2) -> bool
-// where
-//     I1: Iterator<T>,
-//     I2: Iterator<T>,
-//     T: Eq,
-// {
-
-// }
