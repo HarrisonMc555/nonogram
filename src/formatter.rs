@@ -189,7 +189,7 @@ impl Formatter {
     fn format_tile(&self, maybe_tile: MaybeTile) -> &str {
         match maybe_tile {
             Some(Tile::Filled) => &self.filled_string,
-            Some(Tile::FilledColor(_)) => &self.filled_string,
+            Some(Tile::FilledWithColor(_)) => &self.filled_string,
             Some(Tile::NotFilled) => &self.not_filled_string,
             None => &self.none_string,
         }

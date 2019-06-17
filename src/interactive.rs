@@ -29,8 +29,6 @@ pub fn main() {
         vec![1, 3],
         vec![2, 1],
     ];
-    // let row_clues = vec![vec![2], vec![1, 1], vec![3]];
-    // let col_clues = vec![vec![3], vec![1, 1], vec![1], vec![1]];
     let mut non = Nonogram::new(row_clues, col_clues);
     non.set_tile(1, 2, Tile::Filled);
     non.set_tile(2, 2, Tile::NotFilled);
@@ -251,7 +249,7 @@ impl NonogramView {
     }
 
     fn draw_grid_row(&self, index: usize, printer: &Printer) {
-        for (j, maybe_tile) in self.nonogram.get_row(index).iter().enumerate() {
+        for (j, maybe_tile) in self.nonogram.get_row(index).enumerate() {
             let location = (index, j);
             self.draw_tile(*maybe_tile, location, printer);
         }
@@ -332,7 +330,7 @@ impl NonogramView {
     fn maybe_tile_to_string(maybe_tile: MaybeTile) -> &'static str {
         match maybe_tile {
             Some(Tile::Filled) => NonogramView::FILLED_STRING,
-            Some(Tile::FilledColor(_)) => NonogramView::FILLED_STRING,
+            Some(Tile::FilledWithColor(_)) => NonogramView::FILLED_STRING,
             Some(Tile::NotFilled) => NonogramView::NOT_FILLED_STRING,
             None => NonogramView::UNKNOWN_STRING,
         }
