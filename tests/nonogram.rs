@@ -127,7 +127,7 @@ fn can_get_rows() {
     let mut non = get_small_nonogram();
     let empty_row = [None; 4];
     for i in 0..non.num_rows() {
-        assert_eq!(non.get_row(i), &empty_row);
+        assert!(non.get_row(i).eq(empty_row.iter()));
     }
     let row_index = 1;
     let col_index = 2;
@@ -135,9 +135,9 @@ fn can_get_rows() {
     non.set_tile(row_index, col_index, non::Tile::Filled);
     for i in 0..non.num_rows() {
         if i == row_index {
-            assert_eq!(non.get_row(i), &altered_row);
+            assert!(non.get_row(i).eq(altered_row.iter()));
         } else {
-            assert_eq!(non.get_row(i), &empty_row);
+            assert!(non.get_row(i).eq(empty_row.iter()));
         }
     }
 }
@@ -146,8 +146,16 @@ fn can_get_rows() {
 fn can_get_cols() {
     let mut non = get_small_nonogram();
     let empty_col = [None; 3];
+    println!("I am about to fail");
+    println!("{:?}", non);
+
     for i in 0..non.num_cols() {
-        assert_eq!(non.get_col(i), &empty_col);
+        println!(
+            "non.get_col({}) = {:?}",
+            i,
+            non.get_col(i).collect::<Vec<_>>()
+        );
+        assert!(non.get_col(i).eq(empty_col.iter()));
     }
     let row_index = 1;
     let col_index = 2;
@@ -155,9 +163,9 @@ fn can_get_cols() {
     non.set_tile(row_index, col_index, non::Tile::Filled);
     for i in 0..non.num_cols() {
         if i == col_index {
-            assert_eq!(non.get_col(i), &altered_col);
+            assert!(non.get_col(i).eq(altered_col.iter()));
         } else {
-            assert_eq!(non.get_col(i), &empty_col);
+            assert!(non.get_col(i).eq(empty_col.iter()));
         }
     }
 }
@@ -195,7 +203,7 @@ fn incorrect_solution_is_incorrect() {
         for (col_i, _) in row.iter().enumerate() {
             // Fill every other tile. This should be incorrect.
             if (row_i + col_i) % 2 == 0 {
-                non.set_tile(row_i, col_i, non::Tile::Filled);                
+                non.set_tile(row_i, col_i, non::Tile::Filled);
             }
             assert!(!non.is_correct_solution());
         }
@@ -247,3 +255,12 @@ fn blank_tiles_do_not_affect_correct_solution() {
         }
     }
 }
+
+// fn iter_equal<T, I1, I2>(mut iter1: I1, mut iter2: I2) -> bool
+// where
+//     I1: Iterator<T>,
+//     I2: Iterator<T>,
+//     T: Eq,
+// {
+
+// }

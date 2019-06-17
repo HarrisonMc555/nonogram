@@ -48,22 +48,9 @@ impl Tile {
     }
 }
 
-macro_rules! rows {
-    ( $nonogram:expr ) => {
-        Nonogram::row_indices($nonogram).map(|index| $nonogram.get_row(index))
-    };
-}
-
-macro_rules! cols {
-    ( $nonogram:expr ) => {
-        Nonogram::col_indices($nonogram).map(|index| $nonogram.get_col(index))
-    };
-}
-
+#[derive(Debug, Clone, Eq, PartialEq)]
 pub struct Nonogram {
     tiles: Array2D<MaybeTile>,
-    // grid_row_major: Vec<MaybeTile>,
-    // grid_col_major: Vec<MaybeTile>,
     row_clues: Vec<LineClues>,
     col_clues: Vec<LineClues>,
 }
@@ -105,7 +92,7 @@ impl Nonogram {
     }
 
     pub fn get_col(&self, col: usize) -> impl Iterator<Item = &MaybeTile> {
-        self.tiles.row_iter(col)
+        self.tiles.column_iter(col)
     }
 
     pub fn row_clues(&self) -> &[LineClues] {
@@ -141,23 +128,17 @@ impl Nonogram {
             && self.col_clues == self.col_sequence_lengths()
     }
 
-    fn row_indices(&self) -> std::ops::Range<usize> {
-        0..self.num_rows()
-    }
-
-    fn col_indices(&self) -> std::ops::Range<usize> {
-        0..self.num_cols()
-    }
-
     fn row_sequence_lengths(&self) -> Vec<LineClues> {
-        rows!(self)
-            .map(|row| Nonogram::sequence_lengths(row))
+        self.tiles
+            .rows_iter()
+            .map(|row_iter| Nonogram::sequence_lengths(row_iter))
             .collect()
     }
 
     fn col_sequence_lengths(&self) -> Vec<LineClues> {
-        cols!(self)
-            .map(|col| Nonogram::sequence_lengths(col))
+        self.tiles
+            .columns_iter()
+            .map(|column_iter| Nonogram::sequence_lengths(column_iter))
             .collect()
     }
 
@@ -165,8 +146,8 @@ impl Nonogram {
     where
         I: Iterator<Item = &'a MaybeTile>,
     {
-        let sequence = sequence
-            .map(|maybe_tile| maybe_tile.unwrap_or(Tile::NotFilled));
+        let sequence =
+            sequence.map(|maybe_tile| maybe_tile.unwrap_or(Tile::NotFilled));
         let groups = sequence.group_by(|&t| t);
         let filled = groups.into_iter().filter(|(tile, _)| tile.is_filled());
         filled.map(|(_, group)| group.count()).collect()
