@@ -56,7 +56,10 @@ pub struct Nonogram {
 }
 
 impl Nonogram {
-    pub fn new(row_clues: Vec<LineClues>, column_clues: Vec<LineClues>) -> Self {
+    pub fn new(
+        row_clues: Vec<LineClues>,
+        column_clues: Vec<LineClues>,
+    ) -> Self {
         let num_rows = row_clues.len();
         let num_cols = column_clues.len();
         let tiles = Array2D::filled_with(None, num_rows, num_cols);
@@ -91,7 +94,10 @@ impl Nonogram {
         self.tiles.row_iter(row)
     }
 
-    pub fn get_column(&self, column: usize) -> impl Iterator<Item = &MaybeTile> {
+    pub fn get_column(
+        &self,
+        column: usize,
+    ) -> impl Iterator<Item = &MaybeTile> {
         self.tiles.column_iter(column)
     }
 
