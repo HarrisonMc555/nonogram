@@ -225,8 +225,7 @@ fn correct_solution_is_correct() {
             // not be considered correct. Once we have set all of the filled
             // tiles, it *should* be considered correct (regardless of whether
             // or not the last tiles are unfilled or blank (None)).
-            let should_be_correct_solution =
-                (row_i, column_i) >= last_filled_cell_indices;
+            let should_be_correct_solution = (row_i, column_i) >= last_filled_cell_indices;
             assert_eq!(non.is_correct_solution(), should_be_correct_solution);
         }
     }
@@ -249,8 +248,7 @@ fn blank_tiles_do_not_affect_correct_solution() {
             // not be considered correct. Once we have set all of the filled
             // tiles, it *should* be considered correct (regardless of whether
             // or not the last tiles are unfilled or blank (None)).
-            let should_be_correct_solution =
-                (row_i, column_i) >= last_filled_cell_indices;
+            let should_be_correct_solution = (row_i, column_i) >= last_filled_cell_indices;
             assert_eq!(non.is_correct_solution(), should_be_correct_solution);
         }
     }

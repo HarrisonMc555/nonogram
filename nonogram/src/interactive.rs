@@ -66,9 +66,7 @@ pub fn main() {
             let mut non_view = get_nonogram_view(s);
             non_view.toggle_filled_focused();
             if non_view.is_correct_solution() {
-                s.add_layer(
-                    Dialog::new().title("You won!").button("Ok", |s| s.quit()),
-                );
+                s.add_layer(Dialog::new().title("You won!").button("Ok", |s| s.quit()));
             }
         })
         .on_event(Event::Char('x'), |s| {
@@ -205,12 +203,7 @@ impl NonogramView {
             let x = x_offset + self.row_clue_space_width() * j;
             let y = y_offset + row_index;
             let position = (x, y);
-            NonogramView::draw_clue(
-                *clue,
-                position,
-                self.row_clue_space_width(),
-                printer,
-            );
+            NonogramView::draw_clue(*clue, position, self.row_clue_space_width(), printer);
         }
     }
 
@@ -223,21 +216,11 @@ impl NonogramView {
             let x = x_offset + column_index * self.column_clue_space_width();
             let y = y_offset + j;
             let position = (x, y);
-            NonogramView::draw_clue(
-                *clue,
-                position,
-                self.column_clue_space_width(),
-                printer,
-            );
+            NonogramView::draw_clue(*clue, position, self.column_clue_space_width(), printer);
         }
     }
 
-    fn draw_clue(
-        clue: Clue,
-        position: (usize, usize),
-        width: usize,
-        printer: &Printer,
-    ) {
+    fn draw_clue(clue: Clue, position: (usize, usize), width: usize, printer: &Printer) {
         let s = format!("{:>width$}", clue, width = width);
         printer.print(position, &s);
     }
@@ -255,12 +238,7 @@ impl NonogramView {
         }
     }
 
-    fn draw_tile(
-        &self,
-        tile: MaybeTile,
-        location: (usize, usize),
-        printer: &Printer,
-    ) {
+    fn draw_tile(&self, tile: MaybeTile, location: (usize, usize), printer: &Printer) {
         let (row, column) = location;
         // all row/column clues + 1 for divider
         let x_offset = self.max_num_row_clues * self.row_clue_space_width() + 1;
@@ -385,23 +363,14 @@ impl View for NonogramView {
     }
 
     fn required_size(&mut self, _constraint: Vec2) -> Vec2 {
-        let row_clues_width =
-            self.max_num_row_clues * self.row_clue_space_width();
+        let row_clues_width = self.max_num_row_clues * self.row_clue_space_width();
         let column_clues_height = self.max_num_column_clues;
         let grid_width = self.nonogram.num_cols() * NonogramView::cell_width();
         let grid_height = self.nonogram.num_rows();
         // Clues + divider + grid
         let width = row_clues_width + 1 + grid_width;
         let height = column_clues_height + 1 + grid_height;
-        // eprintln!("max_num_row_clues: {}", self.max_num_row_clues);
-        // eprintln!("max_num_column_clues: {}", self.max_num_column_clues);
-        // eprintln!("max_row_clue_width: {}", self.max_row_clue_width);
-        // eprintln!("max_column_clue_width: {}", self.max_column_clue_width);
-        // eprintln!("cell_width: {}", NonogramView::cell_width());
-        // eprintln!("width: {}", width);
-        // eprintln!("height: {}", height);
         (width, height).into()
-        // (self.nonogram.num_cols() * 2 + 1, self.nonogram.num_rows()).into()
     }
 }
 

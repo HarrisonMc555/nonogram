@@ -61,9 +61,7 @@ impl Formatter {
             .collect();
 
         let mut bottom_section = rows_string_grid;
-        for (row_clues, cells) in
-            bottom_section.iter_mut().zip(cells_string_grid.into_iter())
-        {
+        for (row_clues, cells) in bottom_section.iter_mut().zip(cells_string_grid.into_iter()) {
             row_clues.extend(cells);
         }
 
@@ -85,11 +83,7 @@ impl Formatter {
         let max_num_clues = get_max_num_row_clues(non);
         let max_row_clue_width = get_max_row_clue_width(non);
         let clue_string_grid = get_string_grid(non.row_clues());
-        Formatter::waterfill_clue_string_grid(
-            &clue_string_grid,
-            max_num_clues,
-            max_row_clue_width,
-        )
+        Formatter::waterfill_clue_string_grid(&clue_string_grid, max_num_clues, max_row_clue_width)
     }
 
     fn get_cols_clue_string_grid(non: &Nonogram) -> Grid<String> {
@@ -108,9 +102,7 @@ impl Formatter {
         non.rows()
             .map(|row_iter| {
                 row_iter
-                    .map(|maybe_tile| {
-                        self.format_tile(maybe_tile.clone()).to_string()
-                    })
+                    .map(|maybe_tile| self.format_tile(maybe_tile.clone()).to_string())
                     .collect()
             })
             .collect()
@@ -125,11 +117,7 @@ impl Formatter {
         clue_string_grid
             .iter()
             .map(|strings| {
-                Formatter::get_one_line_clue_string_vec(
-                    strings,
-                    max_num_clues,
-                    &filler_spaces,
-                )
+                Formatter::get_one_line_clue_string_vec(strings, max_num_clues, &filler_spaces)
             })
             .collect()
     }
@@ -141,8 +129,7 @@ impl Formatter {
     ) -> Vec<String> {
         let num_clues = clue_strings.len();
         let num_filler_cells = max_num_clues - num_clues;
-        let filler_strings =
-            (0..num_filler_cells).map(|_| filler_spaces.to_string());
+        let filler_strings = (0..num_filler_cells).map(|_| filler_spaces.to_string());
         let clue_strings = clue_strings.iter().cloned();
         filler_strings.chain(clue_strings).collect()
     }
@@ -160,11 +147,11 @@ impl Formatter {
         let column_lines_with_leading_spaces = column_lines
             .iter()
             .map(|line| format!("{}  {}", leading_spaces, line));
-        let horizontal_line =
-            format!("{}  {}", leading_spaces, "_".repeat(max_column_width));
-        let row_and_grid_lines = row_lines.iter().zip(grid_lines.iter()).map(
-            |(row_line, grid_line)| format!("{} |{}", row_line, grid_line),
-        );
+        let horizontal_line = format!("{}  {}", leading_spaces, "_".repeat(max_column_width));
+        let row_and_grid_lines = row_lines
+            .iter()
+            .zip(grid_lines.iter())
+            .map(|(row_line, grid_line)| format!("{} |{}", row_line, grid_line));
         column_lines_with_leading_spaces
             .chain(Some(horizontal_line))
             .chain(row_and_grid_lines)
@@ -263,12 +250,7 @@ impl Formatter {
         let filler_spaces = " ".repeat(clue_width);
         (0..max_num_clues)
             .map(|i| {
-                Formatter::format_column_clues_at(
-                    &clue_strings,
-                    i,
-                    max_num_clues,
-                    &filler_spaces,
-                )
+                Formatter::format_column_clues_at(&clue_strings, i, max_num_clues, &filler_spaces)
             })
             .collect()
     }
@@ -286,7 +268,8 @@ impl Formatter {
                     return filler_spaces.to_string();
                 }
                 let i = index + column.len() - max_num_clues;
-                column.get(i)
+                column
+                    .get(i)
                     .cloned()
                     .unwrap_or_else(|| filler_spaces.to_string())
             })

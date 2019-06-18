@@ -56,10 +56,7 @@ pub struct Nonogram {
 }
 
 impl Nonogram {
-    pub fn new(
-        row_clues: Vec<LineClues>,
-        column_clues: Vec<LineClues>,
-    ) -> Self {
+    pub fn new(row_clues: Vec<LineClues>, column_clues: Vec<LineClues>) -> Self {
         let num_rows = row_clues.len();
         let num_cols = column_clues.len();
         let tiles = Array2D::filled_with(None, num_rows, num_cols);
@@ -70,15 +67,11 @@ impl Nonogram {
         }
     }
 
-    pub fn rows(
-        &self,
-    ) -> impl Iterator<Item = impl Iterator<Item = &MaybeTile>> {
+    pub fn rows(&self) -> impl Iterator<Item = impl Iterator<Item = &MaybeTile>> {
         self.tiles.rows_iter()
     }
 
-    pub fn cols(
-        &self,
-    ) -> impl Iterator<Item = impl Iterator<Item = &MaybeTile>> {
+    pub fn cols(&self) -> impl Iterator<Item = impl Iterator<Item = &MaybeTile>> {
         self.tiles.columns_iter()
     }
 
@@ -94,10 +87,7 @@ impl Nonogram {
         self.tiles.row_iter(row)
     }
 
-    pub fn get_column(
-        &self,
-        column: usize,
-    ) -> impl Iterator<Item = &MaybeTile> {
+    pub fn get_column(&self, column: usize) -> impl Iterator<Item = &MaybeTile> {
         self.tiles.column_iter(column)
     }
 
@@ -152,8 +142,7 @@ impl Nonogram {
     where
         I: Iterator<Item = &'a MaybeTile>,
     {
-        let sequence =
-            sequence.map(|maybe_tile| maybe_tile.unwrap_or(Tile::NotFilled));
+        let sequence = sequence.map(|maybe_tile| maybe_tile.unwrap_or(Tile::NotFilled));
         let groups = sequence.group_by(|&t| t);
         let filled = groups.into_iter().filter(|(tile, _)| tile.is_filled());
         filled.map(|(_, group)| group.count()).collect()
