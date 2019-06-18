@@ -11,40 +11,27 @@ pub fn main() {
     #[rustfmt::skip]
     let row_clues = vec![
         vec![2],
-        vec![2, 1],
-        vec![1, 1],
         vec![3],
         vec![1, 1],
-        vec![1, 1],
-        vec![2],
-        vec![1, 1],
-        vec![1, 2],
-        vec![2],
     ];
     #[rustfmt::skip]
     let column_clues = vec![
-        vec![2, 1],
-        vec![2, 1, 3],
-        vec![7],
-        vec![1, 3],
-        vec![2, 1],
+        vec![2],
+        vec![3],
+        vec![1],
+        vec![1],
     ];
-    let mut non = Nonogram::new(row_clues, column_clues);
-    non.set_tile(1, 2, Tile::Filled);
-    non.set_tile(2, 2, Tile::NotFilled);
+    let non = Nonogram::new(row_clues, column_clues);
 
     let mut siv = Cursive::default();
-
-    // cursive::logger::init();
 
     siv.add_layer(
         OnEventView::new(
             Dialog::new()
                 .title("Nonogram")
                 .content(
-                    LinearLayout::horizontal().child(Panel::new(
-                        NonogramView::new(non).with_id("game"),
-                    )),
+                    LinearLayout::horizontal()
+                        .child(Panel::new(NonogramView::new(non).with_id("game"))),
                 )
                 .button("Quit game", |s| {
                     s.quit();
@@ -246,7 +233,6 @@ impl NonogramView {
         let x = x_offset + NonogramView::cell_width() * column;
         let y = y_offset + row;
         let position = (x, y);
-        // eprintln!("position: {:?}", position);
         let s = format!(
             "{:<width$}",
             NonogramView::maybe_tile_to_string(tile),
@@ -280,11 +266,9 @@ impl NonogramView {
         let x = self.max_num_row_clues * self.row_clue_space_width();
         let y_offset = self.max_num_column_clues + 1;
         let s = NonogramView::SIDE_DIVIDER.to_string();
-        // eprintln!("s: {}", s);
         for j in 0..self.nonogram.num_rows() {
             let y = y_offset + j;
             let position = (x, y);
-            // eprintln!("position: {:?}", position);
             printer.print(position, &s);
         }
     }
