@@ -1,5 +1,5 @@
 // Structs
-struct NonogramFile {
+pub struct NonogramFile {
     pub width: u64,
     pub height: u64,
     pub rows: Vec<Hint>,
@@ -15,31 +15,31 @@ struct NonogramFile {
     pub colors: Option<Vec<ColorDefinition>>,
 }
 
-enum Cell {
+pub enum Cell {
     Empty,
     Filled(Option<ColorCode>),
 }
 
-struct Hint {
+pub struct Hint {
     pub length: u64,
     pub color: Option<ColorCode>,
 }
 
-struct ColorCode(pub char);
+pub struct ColorCode(pub char);
 
-struct ColorDefinition {
+pub struct ColorDefinition {
     pub code: ColorCode,
     pub color: Color,
 }
 
-struct Color {
+pub struct Color {
     pub red: u8,
     pub green: u8,
     pub blue: u8,
 }
 
 // Builder
-struct NonogramFileBuilder {
+pub struct NonogramFileBuilder {
     pub width: Option<u64>,
     pub height: Option<u64>,
     pub rows: Option<Vec<Hint>>,
@@ -136,13 +136,13 @@ impl NonogramFileBuilder {
     add_value_fn!(license<&str>);
 }
 
-enum Error {
+pub enum Error {
     DuplicateValue(String),
     ThisNeededRequiredValue(String, String),
 }
 
-type Result<T> = std::result::Result<T, Error>;
-type BuildResult<'a> = Result<&'a NonogramFileBuilder>;
+pub type Result<T> = std::result::Result<T, Error>;
+pub type BuildResult<'a> = Result<&'a NonogramFileBuilder>;
 
 // Main
 pub fn main() {
