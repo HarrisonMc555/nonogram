@@ -16,23 +16,10 @@ pub use crate::nonogram::{Nonogram, Tile};
 // }
 // mod nonogram_file;
 
-#[cfg(feature = "parser")]
-mod parser;
-#[cfg(feature = "parser")]
-#[macro_use]
-extern crate nom;
-
 #[cfg(feature = "interactive")]
 mod interactive;
 #[cfg(feature = "interactive")]
 fn main() {
-    #[cfg(feature = "parser")]
-    parser::main();
-
-    #[cfg(feature = "parser")]
-    let run = false;
-
-    #[cfg(not(feature = "parser"))]
     let run = true;
     if run {
         interactive::main();
