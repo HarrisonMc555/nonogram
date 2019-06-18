@@ -1,0 +1,9 @@
+[package]
+name = "nonogram-parser"
+version = "0.1.0"
+authors = ["Harrison McCullough <mccullough.harrison@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+nonogram = { path = "../nonogram" }
+nom = "4.2.3"
