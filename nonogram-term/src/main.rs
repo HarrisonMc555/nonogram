@@ -1,4 +1,4 @@
-use crate::nonogram::{Clue, LineClues, MaybeTile, Nonogram, Tile};
+use nonogram::{Clue, LineClues, MaybeTile, Nonogram, Tile};
 use cursive::event::{Event, Key};
 use cursive::traits::*;
 use cursive::vec::Vec2;

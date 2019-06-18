@@ -1,5 +1,5 @@
 pub mod nonogram;
-pub use crate::nonogram::{Nonogram, Tile};
+pub use crate::nonogram::{Clue, LineClues, MaybeTile, Nonogram, Tile};
 
 pub mod formatter;
 pub use crate::formatter::Formatter;

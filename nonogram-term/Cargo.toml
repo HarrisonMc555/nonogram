@@ -1,9 +1,9 @@
 [package]
-name = "nonogram"
+name = "nonogram-term"
 version = "0.1.0"
 authors = ["Harrison McCullough <mccullough.harrison@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-array2d = { version = "0.2", path = "../../array2d" }
-itertools = "0.8"
+nonogram = { path = "../nonogram" }
+cursive = "0.11"
