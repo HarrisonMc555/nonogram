@@ -1,4 +1,3 @@
-use nonogram::{Clue, LineClues, MaybeTile, Nonogram, Tile};
 use cursive::event::{Event, Key};
 use cursive::traits::*;
 use cursive::vec::Vec2;
@@ -6,6 +5,7 @@ use cursive::view::View;
 use cursive::views::{Dialog, LinearLayout, OnEventView, Panel, ViewRef};
 use cursive::Cursive;
 use cursive::Printer;
+use nonogram::{Clue, LineClues, MaybeTile, Nonogram, Tile};
 
 pub fn main() {
     #[rustfmt::skip]

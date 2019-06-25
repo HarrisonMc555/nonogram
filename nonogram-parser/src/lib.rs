@@ -24,7 +24,7 @@ pub mod parser;
 #[macro_use]
 extern crate nom;
 
-use nom::{space1, is_not, named, tag, call, map_res, take_while};
+use nom::{call, is_not, map_res, named, space1, tag, take_while};
 
 named!(string<&str, &str>,
        delimited!(
